@@ -27,6 +27,7 @@ d3.csv("data/top_100_streamers_last_365_days.csv")
                         d3.select(this)
                             .each(function (d) {
                                 currStreamer = d;
+                                markAsSelected(this);
                             })
                     })
                 .append('img')
@@ -59,4 +60,16 @@ function setStreamerDetail(streamer) {
 
     d3.select('#streamer-language > .label').text('language');
     d3.select('#streamer-language > .value').text(streamer.Language);
+}
+
+function markAsSelected(elem) {
+    // clear previous selections
+    d3.selectAll(".icon > img")
+        .style("opacity", "1.0")
+        .style("background-color", "white");
+    // mark element as selected
+    d3.select(elem)
+        .select("img")
+            .style("opacity", "0.5")
+            .style("background-color", "blueviolet");
 }
