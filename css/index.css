@@ -72,3 +72,16 @@ body {
 .streamer-field > .value {
     font-weight: bold;
 }
+
+#gantt-chart-container {
+    display: flex;
+}
+
+#gantt-chart-svg {
+    margin: auto;
+    width: 80%;
+}
+
+#encoding-selector-container {
+    display: block;
+}
