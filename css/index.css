@@ -75,13 +75,18 @@ body {
 
 #gantt-chart-container {
     display: flex;
+    width: 100%;
 }
 
 #gantt-chart-svg {
     margin: auto;
-    width: 80%;
 }
 
-#encoding-selector-container {
-    display: block;
+#gantt-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: auto;
+    padding-top: 10px;
+    width: 80%;
 }

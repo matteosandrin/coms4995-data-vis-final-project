@@ -35,6 +35,21 @@ d3.csv("https://raw.githubusercontent.com/matteosandrin/coms4995-data-vis-final-
     }
 );
 
+// Encoding selector for Gantt
+const encoding_options = ['Average Viewers', 'Stream Count'];
+        
+var select = d3.select('#encoding-selector-container')
+    .append('select')
+        .attr('class', 'select')
+        .attr("id", "encoding-selector")
+        .on('change', changeEncoding);
+
+select
+    .selectAll('option')
+    .data(encoding_options)
+    .enter()
+    .append('option')
+        .text(function (d) { return d; });
 
 // Gantt Chart
 d3.csv("https://raw.githubusercontent.com/AlexCCohen/data_viz_A5/main/avg_viewers_month_v3.csv")
@@ -57,8 +72,6 @@ d3.csv("https://raw.githubusercontent.com/AlexCCohen/data_viz_A5/main/avg_viewer
         const rect_height = height/(num_streamers+1) - height_padding;
         
         const rect_width = (screen.width - text_padding)/total_months - width_padding;
-            
-        const color = d3.scaleSequential(d3.interpolateBlues).domain([-2000, 20000]);
 
         d3.select('#gantt-chart-svg')
             .attr("viewBox", [0, 0, screen.width, height])
@@ -69,7 +82,7 @@ d3.csv("https://raw.githubusercontent.com/AlexCCohen/data_viz_A5/main/avg_viewer
                 .attr("height", rect_height)
                 .attr("y", d => (rect_height + height_padding)*d.rank)
                 .attr("x", d => date_scale(dateDiff(d.start, date_extent[0])))
-                .attr("fill", d => color(d.avg_viewers))
+                .attr("fill", d => getColorScheme(d, encoding_options[0]))
                 .attr("opacity", 1)
                 .on("mouseover", function() {
                     d3.select(this)
@@ -121,27 +134,6 @@ d3.csv("https://raw.githubusercontent.com/AlexCCohen/data_viz_A5/main/avg_viewer
                         .transition()
                         .attr("font-size", 9);
                 });
-
-        var data = ['Stream Count', 'Avg Viewers'];
-        
-        var select = d3.select('#encoding-selector-container')
-            .append('select')
-                .attr('class','select')
-            .on('change',onchange);
-        
-        var options = select
-            .selectAll('option')
-            .data(data).enter()
-            .append('option')
-                .text(function (d) { return d; });
-        
-        function onchange() {
-            selectValue = d3.select('select').property('value')
-            const new_color = d3.scaleSequential(d3.interpolateBlues).domain([0, 60]);
-            d3.select('#gantt-chart-svg')
-                .selectAll('rect')
-                .attr("fill", d => new_color(d.count));
-        };
     }
 );
 
@@ -186,8 +178,22 @@ function markAsSelected(elem) {
 }
 
 function getStreamsData(raw_data) {
+    const months = {
+        'Jan': 0,
+        'Feb': 1,
+        'Mar': 2,
+        'Apr': 3,
+        'May': 4,
+        'Jun': 5,
+        'Jul': 6,
+        'Aug': 7,
+        'Oct': 8,
+        'Sep': 9,
+        'Nov': 10,
+        'Dec': 11
+    };
+    
     var arr = [];
-    const months = {'Jan': 0, 'Feb': 1, 'Mar': 2, 'Apr': 3, 'May': 4, 'Jun': 5, 'Jul': 6, 'Aug': 7, 'Oct': 8, 'Sep': 9, 'Nov': 10, 'Dec': 11};
     
     for (var idx in raw_data) {
         const curr_obj = raw_data[idx];
@@ -215,6 +221,27 @@ function dateDiff(date_1, date_2) {
     months -= first_date.getMonth();
     months += second_date.getMonth();
     return months;
+}
+        
+function changeEncoding() {
+    const select_value = d3.select('#encoding-selector').property('value');
+        
+    d3.select('#gantt-chart-svg')
+        .selectAll('rect')
+        .attr("fill", d => getColorScheme(d, select_value));
+}
 
-    return Math.round(Math.abs((date_1 - date_2)/(1000 * 60 * 60 * 24)));
-  }
+function getColorScheme(d, value) {
+    var color_scheme;
+    var color;
+
+    if (value == 'Stream Count') {
+        color_scheme = d3.scaleSequential(d3.interpolateBlues).domain([0, 60]);
+        color = color_scheme(d.count);
+    } else {
+        color_scheme = d3.scaleSequential(d3.interpolateBlues).domain([-2000, 20000]);
+        color = color_scheme(d.avg_viewers);
+    }
+
+    return color;
+}
