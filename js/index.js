@@ -36,9 +36,19 @@ d3.csv("https://raw.githubusercontent.com/matteosandrin/coms4995-data-vis-final-
 );
 
 // Encoding selector for Gantt
-const encoding_options = ['Average Viewers', 'Stream Count'];
+const encoding_options = [
+    'Average Viewers',
+    'Stream Count',
+    'Average Followers Gained',
+    'Average Peak Viewers',
+    'Average Stream Length',
+    'Average Views per Hour',
+];
+
+// Selection options: rank, streamer, gender, nationality, age
         
 var select = d3.select('#encoding-selector-container')
+    .append('text').text('Select Encoding')
     .append('select')
         .attr('class', 'select')
         .attr("id", "encoding-selector")
@@ -52,7 +62,7 @@ select
         .text(function (d) { return d; });
 
 // Gantt Chart
-d3.csv("https://raw.githubusercontent.com/AlexCCohen/data_viz_A5/main/avg_viewers_month_v3.csv")
+d3.csv("https://raw.githubusercontent.com/matteosandrin/coms4995-data-vis-final-project/gantt-chart/data/gantt_month_data.csv")
     .then(function (raw_data) {
         data = getStreamsData(raw_data);
 
@@ -64,23 +74,26 @@ d3.csv("https://raw.githubusercontent.com/AlexCCohen/data_viz_A5/main/avg_viewer
             .range([text_padding, screen.width]);
 
         const height = 1200;
-            
+        const margin = {top: 80, left: 0, right: 0, bottom: 20};
             
         const width_padding = 1;
         const height_padding = 2;
         const num_streamers = 100;
-        const rect_height = height/(num_streamers+1) - height_padding;
+        const rect_height = (height - margin.top - margin.bottom)/(num_streamers+1) - height_padding;
         
         const rect_width = (screen.width - text_padding)/total_months - width_padding;
 
         d3.select('#gantt-chart-svg')
-            .attr("viewBox", [0, 0, screen.width, height])
+            .attr("viewBox", [0, 0, screen.width, height]);
+
+        // Make the gantt chart rects
+        d3.select('#gantt-chart-svg')
             .selectAll('rect')
             .data(data)
             .join('rect')
                 .attr("width", rect_width)
                 .attr("height", rect_height)
-                .attr("y", d => (rect_height + height_padding)*d.rank)
+                .attr("y", d => margin.top + (rect_height + height_padding)*d.rank)
                 .attr("x", d => date_scale(dateDiff(d.start, date_extent[0])))
                 .attr("fill", d => getColorScheme(d, encoding_options[0]))
                 .attr("opacity", 1)
@@ -95,13 +108,65 @@ d3.csv("https://raw.githubusercontent.com/AlexCCohen/data_viz_A5/main/avg_viewer
                         .attr("stroke-width", 0);
                 });
 
+        // Make rects to cover for selectedt attrs (gender here)
+        d3.select('#gantt-chart-svg')
+            .append('g')
+            .selectAll('rect')
+            .data([...new Set(data.map(d => d.rank))])
+            .join('rect')
+                .attr("id", d => "select_rect_gender_" + d)
+                .attr("width", date_scale(dateDiff(date_extent[1], date_extent[0])))
+                .attr("height", rect_height)
+                .attr("y", d => margin.top + (rect_height + height_padding)*d)
+                .attr("x", date_scale(dateDiff(date_extent[0], date_extent[0])))
+                .attr("fill", "white")
+                .attr("opacity", 0);
+
+
+        const select_width = 120;
+        const select_height = 40;
+
+        var property = "gender";
+
+        // Make selector boxes to pick properties (gender here)
+        d3.select("#gantt-chart-svg")
+            .append("g")
+            .selectAll("rect")
+            .data([...(new Set(data.map(d => d.gender).sort()))])
+            .join("rect")
+                .attr("id", d => "rect_select_" + property + "_" + d)
+                .attr("x", (_, i) => i*select_width)
+                .attr("y", 0)
+                .attr("width", select_width)
+                .attr("height", select_height)
+                .attr("fill", "purple")
+                .attr("stroke", "black")
+                .attr("opacity", .5)
+                .on("click", function(event, selectedData) {
+                    selectStreamers(data, property, selectedData);
+                });
+
+        d3.select("#gantt-chart-svg")
+            .append("g")
+            .selectAll("text")
+            .data([...(new Set(data.map(d => d.gender).sort()))])
+            .join("text")
+                .attr("id", d => "text_select_" + property + "_" + d)
+                .attr("x", (_, i) => i*select_width + select_width*.5)
+                .attr("y", select_height/2)
+                .text(d => d)
+                .on("click", function(event, selectedData) {
+                    selectStreamers(data, property, selectedData);
+                });
+
+        // Make text for rankings of streamers
         d3.select("#gantt-chart-svg")
             .append("g")
             .selectAll("text")
             .data([...Array(100).keys()].map(d=>d+1))
             .join("text")
                 .attr("id", d => "streamer_text_" + d)
-                .attr("y", d => (rect_height + height_padding)*d + rect_height/2)
+                .attr("y", d => margin.top + (rect_height + height_padding)*d + rect_height/2)
                 .attr("x", 5)
                 .text(d => d)
                 .attr("text-anchor", "start")
@@ -200,13 +265,25 @@ function getStreamsData(raw_data) {
         if (curr_obj == null || curr_obj['rank'] == null) { continue; }
         
         const raw_start_date = curr_obj['start_month'].split('-');
+        const gender = curr_obj['gender'];
+        const nat = curr_obj['nationality'];
+        const birth_year = curr_obj['birth_year'];
+        const age = birth_year != '' ? 2021 - parseInt(birth_year) : -1;
         
         arr = arr.concat({
-        rank: parseInt(curr_obj['rank']),
-        name: curr_obj['streamer'],
-        start: new Date('20' + raw_start_date[1], months[raw_start_date[0]]),
-        avg_viewers: parseFloat(curr_obj['avg_avg_viewers']),
-        count: parseInt(curr_obj['count']),
+            rank: parseInt(curr_obj['rank']),
+            name: curr_obj['streamer'],
+            start: new Date('20' + raw_start_date[1], months[raw_start_date[0]]),
+            gender: gender == 'Male' || gender == 'Female' ? gender : 'NA',
+            nationality: nat != '' && nat != 'N/A' ? nat : 'NA',
+            age: age,
+            stream_count: parseInt(curr_obj['count']),
+            avg_followers_gained: parseFloat(curr_obj['avg_followers_gained']),
+            avg_peak_viewers: parseFloat(curr_obj['avg_peak_viewers']),
+            avg_stream_length: parseFloat(curr_obj['avg_stream_length']),
+            avg_viewers: parseFloat(curr_obj['avg_viewers']),
+            avg_views_per_hour: parseFloat(curr_obj['avg_views_per_hour']),
+            selected: true,
         });
     }
     
@@ -232,16 +309,48 @@ function changeEncoding() {
 }
 
 function getColorScheme(d, value) {
-    var color_scheme;
-    var color;
+    const color_obj = {
+        'Stream Count': {
+            domain: [0, 60],
+            field: function(d) { return d.stream_count; },
+        },
+        'Average Viewers': {
+            domain: [-2000, 20000],
+            field: function(d) { return d.avg_viewers; },
+        },
+        'Average Followers Gained': {
+            domain: [-100, 5000],
+            field: function(d) { return d.avg_followers_gained; },
+        },
+        'Average Peak Viewers': {
+            domain: [0, 50000],
+            field: function(d) { return d.avg_peak_viewers; },
+        },
+        'Average Stream Length': {
+            domain: [0, 600],
+            field: function(d) { return d.avg_stream_length; },
+        },
+        'Average Views per Hour': {
+            domain: [0, 50000],
+            field: function(d) { return d.avg_views_per_hour; },
+        },
+    };
 
-    if (value == 'Stream Count') {
-        color_scheme = d3.scaleSequential(d3.interpolateBlues).domain([0, 60]);
-        color = color_scheme(d.count);
-    } else {
-        color_scheme = d3.scaleSequential(d3.interpolateBlues).domain([-2000, 20000]);
-        color = color_scheme(d.avg_viewers);
+    const encoding = color_obj[value];
+    const color_scheme = d3.scaleSequential(d3.interpolateBlues).domain(encoding.domain);
+    return color_scheme(encoding.field(d));
+}
+
+function selectStreamers(data, property, value) {
+    const selected_data = data.map(d => d[property] == value);
+    const select_id = "#select_rect_" + property + "_";
+
+    for (i = 0; i < selected_data.length; i++) {
+        const curr_select_id = select_id + data[i].rank;
+        d3.select(curr_select_id)
+            .attr("opacity", function() {
+                this.parentElement.appendChild(this);
+                return selected_data[i] ? 0 : .7;
+            });
     }
-
-    return color;
 }
