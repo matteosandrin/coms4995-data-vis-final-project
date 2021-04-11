@@ -146,6 +146,7 @@ d3.csv("https://raw.githubusercontent.com/matteosandrin/coms4995-data-vis-final-
                     selectStreamers(data, property, selectedData);
                 });
 
+        // Text for each selector
         d3.select("#gantt-chart-svg")
             .append("g")
             .selectAll("text")
@@ -309,6 +310,11 @@ function changeEncoding() {
 }
 
 function getColorScheme(d, value) {
+    // Check if selector rect or not
+    if (!('rank' in d)) {
+        return "white";
+    }
+
     const color_obj = {
         'Stream Count': {
             domain: [0, 60],
@@ -350,7 +356,7 @@ function selectStreamers(data, property, value) {
         d3.select(curr_select_id)
             .attr("opacity", function() {
                 this.parentElement.appendChild(this);
-                return selected_data[i] ? 0 : .7;
+                return selected_data[i] ? 0 : .8;
             });
     }
 }
