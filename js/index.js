@@ -1,5 +1,5 @@
 let currStreamer = {};
-d3.csv("data/top_100_streamers_last_365_days.csv")
+d3.csv("https://raw.githubusercontent.com/matteosandrin/coms4995-data-vis-final-project/gantt-chart/data/top_100_streamers_last_365_days.csv")
     .then(function (data) {
         currStreamer = data[0];
         setStreamerDetail(currStreamer);

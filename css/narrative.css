@@ -3,3 +3,7 @@ body {
     color: white !important;
     font-family: 'Libre Franklin', sans-serif !important;
 }
+
+.streamer-pic {
+    width:100%;
+}
