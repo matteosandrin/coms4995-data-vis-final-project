@@ -73,6 +73,11 @@ p{
     margin: 2px;
 }
 
+a {
+    color: blueviolet !important;
+}
+
+
 .icon-large {
     width: 94px;
     height: 94px;
