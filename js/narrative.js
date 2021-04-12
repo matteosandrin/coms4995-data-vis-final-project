@@ -1,3 +1,68 @@
+var barmargin = {top: 30, right: 30, bottom: 70, left: 60},
+barwidth = 460 - barmargin.left - barmargin.right,
+barheight = 400 - barmargin.top - barmargin.bottom;
+
+var barsvg = d3.select("#bar-container")
+.append("svg")
+.attr("width", barwidth + barmargin.left + barmargin.right)
+.attr("height", barheight + barmargin.top + barmargin.bottom)
+.append("g")
+.attr("transform", "translate(" + barmargin.left + "," + barmargin.top + ")");
+d3.csv("data/ages.csv").then(function(data){
+
+  //X axis
+  var x = d3.scaleBand()
+  .range([ 0, barwidth ])
+  .domain(data.map(function(d) {  return d.age; }))
+  .padding(0.2);
+  barsvg.append("g")
+    .attr("transform", "translate(0," + barheight + ")")
+    .call(d3.axisBottom(x))
+    .selectAll("text")
+    .attr("transform", "translate(-10, 0)rotate(-45)")
+    .style("text-anchor", "end");
+
+  // text label for the x axis
+  barsvg.append("text")             
+  .attr("transform",
+        "translate(" + (barwidth/2) + " ," + 
+                      (barheight + barmargin.top + 20) + ")")
+  .style("text-anchor", "middle")
+  .style("fill", "white")
+  .text("Ages");
+
+  var formatPercent = d3.format(".0%");
+
+  //y axis
+  var y = d3.scaleLinear()
+    .domain([0, .5])
+    .range([ barheight, 0])
+  barsvg.append("g")
+    .call(d3.axisLeft(y).tickFormat(formatPercent));
+
+
+  // text label for the y axis
+  barsvg.append("text")
+  .attr("transform", "rotate(-90)")
+  .attr("y", 0 - barmargin.left)
+  .attr("x",0 - (barheight / 2))
+  .attr("dy", "1em")
+  .style("text-anchor", "middle")
+  .text("Percentage")
+  .style("fill", "white");
+
+  //bars
+  barsvg.selectAll("bar")
+  .data(data)
+  .enter()
+  .append("rect")
+    .attr("x", function(d) { return x(d.age); })
+    .attr("y", function(d) { return y(d.percentage)} )
+    .attr("width", x.bandwidth())
+    .attr("height", function(d) { console.log(y(d.percentage)); return barheight - y(d.percentage); })
+    .attr("fill", "#69b3a2")
+})
+
 var data1 = {}
 var data2 = {}
 d3.csv("data/top_10_subs.csv").then(function(data) {
