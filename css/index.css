@@ -10,14 +10,23 @@ html {
 body {
     width: 100%;
     height: 100%;
+    background-color: #333333 !important;
+    color: white !important;
 }
 
-.content {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+.container {
     margin-left: auto;
     margin-right: auto;
     width: min(100%, 1000px);
+    padding: 0px !important;
+}
+
+.narrative {
+    font-size: 1.5rem;
+}
+
+.streamer-pic {
+    width:100%;
 }
 
 #streamer-icons {
@@ -94,16 +103,5 @@ body {
 }
 
 #gantt-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin: auto;
-    width: 80%;
-}
-
-.selector-text {
-    margin: 10px;
-    font-size: 18px;
-    font-weight: bold;
-    margin-left: 100px;
+    padding-top: 10px;
 }

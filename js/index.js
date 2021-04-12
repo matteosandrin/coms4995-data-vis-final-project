@@ -82,7 +82,7 @@ const data_selection_options = {
     'age': ['All', 'Less than 18', '18-25', '26-39', '40-59', '60 and up'],
 };
 
-const margin = {top: 500, left: 0, right: 20, bottom: 20};
+const margin = {top: 100, left: 0, right: 20, bottom: 20};
 
 // Gantt Chart
 d3.csv("https://raw.githubusercontent.com/matteosandrin/coms4995-data-vis-final-project/gantt-chart/data/gantt_month_data.csv")
