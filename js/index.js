@@ -597,7 +597,7 @@ function makeLegend(encoding) {
 }
 
 function createSmallChart(data, curr_rank, encoding, total_months, first_month) {
-    const chart_height = 800;
+    const chart_height = 1000;
     const chart_margin = {left: 150, right: 40, top: 200, bottom: 40};
     d3.select("#small-chart-svg")
         .attr("viewBox", [0, 0, screen.width, chart_height]);
