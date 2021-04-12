@@ -44,7 +44,7 @@ var data_selection_info = {
 
 const data_selection_options = {
     'gender': ['All', 'Male', 'Female', 'NA'],
-    'age': ['All', 'Less than 18', '18-25', '26-39', '40-59', '60 and up'],
+    'age': ['All', 'Less than 18', '18-22', '23-27', '28-32', '33-39', '40 and Up'],
 };
 
 const margin = {top: 110, left: 0, right: 20, bottom: 20};
@@ -383,10 +383,11 @@ function changeAge(data, data_selection_info) {
     const value_to_range = {
         'All': 'All',
         'Less than 18': [0, 17],
-        '18-25': [18, 25],
-        '26-39': [26, 39],
-        '40-59': [40, 59],
-        '60 and up': [60, 100],
+        '18-22': [18, 22],
+        '23-27': [23, 27],
+        '28-32': [28, 32],
+        '33-39': [33, 39],
+        '40 and Up': [40, 100],
     };
 
     selectStreamers(data, data_selection_info, 'age', value_to_range[select_value]);
