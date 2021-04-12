@@ -2,12 +2,9 @@ body {
     background-color: #333333 !important;
     color: white !important;
     font-family: 'Libre Franklin', sans-serif !important;
+    font-size: 20px !important;
 }
 
 .streamer-pic {
     width:100%;
-}
-
-#pie-title{
-    size: 30;
 }
