@@ -126,11 +126,20 @@ a {
     display: flex;
     flex-direction: row;
     align-items: center;
+    margin: 1rem 0rem;
 }
 
 .selection-group {
     border: 2px solid blueviolet;
     padding: 4px;
+}
+
+.selection-item {
+    margin-bottom: 1rem;
+}
+
+.selector-text {
+    margin-right: 1rem;
 }
 
 #gantt-chart-container {
