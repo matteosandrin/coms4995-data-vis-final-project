@@ -57,10 +57,15 @@ var tabulate = function (data,columns) {
 
   var color = d3.scaleOrdinal()
   .domain(["female", "male"])
-  .range(d3.schemeDark2);
+  .range([d3.rgb("#bfabFF"), d3.rgb("#57bee6")]);
 
   function update(data)
   {
+
+    var arcGenerator = d3.arc()
+    .innerRadius(0)
+    .outerRadius(radius)
+
     var pie = d3.pie()
     .value(function(d) { return d[1]; })
     .sort(function(a, b) { return d3.ascending(a.key, b.key);})
@@ -68,7 +73,8 @@ var tabulate = function (data,columns) {
     var data_ready = pie(Object.entries(data))
 
     var u = svg.selectAll("path")
-    .data(data_ready)
+    .data(data_ready)    
+
 
     u
     .enter()
@@ -86,6 +92,16 @@ var tabulate = function (data,columns) {
     .attr("stroke", "white")
     .style("stroke-width", "2px")
     .style("opacity", 1)
+
+    u.enter()
+    .data(data_ready)
+    .append('text')
+    .text(function(d) { console.log(d); return d.data[0]})
+    .transition()
+    .duration(1000)
+    .attr("transform", function(d) { return "translate(" + arcGenerator.centroid(d) + ")";  })
+    .style("text-anchor", "middle")
+    .style("font-size", 17)
 
     u.exit().remove()
   }
