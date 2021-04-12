@@ -18,6 +18,7 @@ body {
     margin-left: auto;
     margin-right: auto;
     width: min(100%, 1000px);
+    padding: 0px !important;
 }
 
 .narrative {
@@ -26,11 +27,6 @@ body {
 
 .streamer-pic {
     width:100%;
-}
-
-.streamer-tiles-container {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
 }
 
 #streamer-icons {
@@ -84,6 +80,17 @@ body {
 
 .streamer-field > .value {
     font-weight: bold;
+}
+
+#selection-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.selection-group {
+    border: 2px solid blueviolet;
+    padding: 4px;
 }
 
 #gantt-chart-container {
