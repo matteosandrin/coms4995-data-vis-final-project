@@ -52,6 +52,7 @@ const margin = {top: 110, left: 0, right: 20, bottom: 20};
 var data = [];
 var total_months = 0;
 var first_month = 0;
+var curr_encoding = encoding_options[0];
 
 // Gantt Chart
 d3.csv("https://raw.githubusercontent.com/matteosandrin/coms4995-data-vis-final-project/gantt-chart/data/top_100_streamers_last_365_days.csv")
@@ -87,7 +88,7 @@ d3.csv("https://raw.githubusercontent.com/matteosandrin/coms4995-data-vis-final-
                                 markAsSelected(this);
                             })
                         
-                        createSmallChart(data, currStreamer.Rank, encoding_options[0], total_months, first_month);
+                        createSmallChart(data, currStreamer.Rank, curr_encoding, total_months, first_month);
                     })
                 .append('img')
                     .attr('src', d => getImageUrl(d));
@@ -230,7 +231,7 @@ d3.csv("https://raw.githubusercontent.com/matteosandrin/coms4995-data-vis-final-
         makeLegend(encoding_options[0]);
 
         first_month = date_extent[0];
-        createSmallChart(data, currStreamer.Rank, encoding_options[0], total_months, first_month);
+        createSmallChart(data, currStreamer.Rank, curr_encoding, total_months, first_month);
     }
 )
 });
@@ -359,14 +360,16 @@ function dateDiff(date_1, date_2) {
 }
         
 function changeEncoding() {
-    const select_value = d3.select('#encoding-selector').property('value');
+    curr_encoding = d3.select('#encoding-selector').property('value');
         
     d3.select("#legend").remove();
-    makeLegend(select_value);
+    makeLegend(curr_encoding);
 
     d3.select('#gantt-chart-svg')
         .selectAll('rect')
-        .attr("fill", d => getColorScheme(d, select_value));
+        .attr("fill", d => getColorScheme(d, curr_encoding));
+
+    createSmallChart(data, currStreamer.Rank, curr_encoding, total_months, first_month);
 }
 
 function changeNationality(data, data_selection_info) {
@@ -605,6 +608,7 @@ function makeLegend(encoding) {
 }
 
 function createSmallChart(data, curr_rank, encoding, total_months, first_month) {
+    console.log(encoding)
     d3.select("#small-chart-svg").selectAll('rect').remove();
     d3.select("#small-chart-svg").selectAll('text').remove();
 
