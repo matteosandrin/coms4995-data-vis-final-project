@@ -138,6 +138,7 @@ d3.csv("https://raw.githubusercontent.com/matteosandrin/coms4995-data-vis-final-
             .attr("y", margin.top)
             .attr("text-anchor", "end")
             .attr("font-weight", "bold")
+            .attr("fill", "white")
             .text("Streamer Name (rank)");
 
         d3.select("#gantt-chart-svg")
@@ -150,6 +151,7 @@ d3.csv("https://raw.githubusercontent.com/matteosandrin/coms4995-data-vis-final-
                 .attr("x", text_padding - 14)
                 .text((d, i) => d + " (" + (i+1) + ")")
                 .attr("text-anchor", "end")
+                .attr("fill", "white")
                 .attr("font-size", 11)
                 .on("mouseover", function(event, selectedData) {
                     mouseOverText(this, selectedData);
@@ -179,6 +181,7 @@ d3.csv("https://raw.githubusercontent.com/matteosandrin/coms4995-data-vis-final-
                 .text(d => d.label)
                 .attr("text-anchor", "start")
                 .attr("stroke-weight", .5)
+                .attr("fill", "white")
                 .attr("font-size", 18);
 
         d3.select("#gantt-chart-svg")
@@ -190,7 +193,7 @@ d3.csv("https://raw.githubusercontent.com/matteosandrin/coms4995-data-vis-final-
                 .attr("x2", d => date_scale(dateDiff(d.date, date_extent[0])))
                 .attr("y1", margin.top + rect_height + height_padding - 30)
                 .attr("y2", height - margin.bottom)
-                .attr("stroke", "black");
+                .attr("stroke", "white");
 
         var select_nationality = d3.select('#nationality-selector-container')
             .append('select')
@@ -378,7 +381,7 @@ function changeAge(data, data_selection_info) {
 
 function getColorScheme(d, value) {
     const encoding = color_obj[value];
-    const color_scheme = d3.scaleSequential(d3.interpolateBlues).domain(encoding.domain);
+    const color_scheme = d3.scaleSequential(d3.interpolatePlasma).domain(encoding.domain);
     return color_scheme(encoding.field(d));
 }
 
@@ -580,6 +583,7 @@ function makeLegend(encoding) {
         .attr("y", -6)
         .attr("x", screen.width - margin.right - 400)
         .attr("font-size", 20)
+        .attr("fill", "white")
         .text(encoding);
 
     const ticks = [curr_domain[0], curr_domain[1]/2, curr_domain[1]];
