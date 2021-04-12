@@ -10,6 +10,41 @@
     </head>
     <body>
         <div class="content">
+            <div class="col">
+                <div class="row align-items-center">
+                    <div class="selector-text">Gender</div>
+                    <div id="gender-buttons">
+                        <button onclick="selectStreamers(gantt_data, data_selection_info, 'gender', 'All')" class="btn btn-primary">
+                            All
+                        </button>
+                        <button onclick="selectStreamers(gantt_data, data_selection_info, 'gender', 'Male')" class="btn btn-primary">
+                            Male
+                        </button>
+                        <button onclick="selectStreamers(gantt_data, data_selection_info, 'gender', 'Female')" class="btn btn-primary">
+                            Female
+                        </button>
+                        <button onclick="selectStreamers(gantt_data, data_selection_info, 'gender', 'NA')" class="btn btn-primary">
+                            N/A
+                        </button>
+                    </div>
+                </div>
+                <div class="row align-items-center">
+                    <div class="selector-text">Nationality</div>
+                    <div id="nationality-selector-container"></div>
+                </div>
+            </div>
+            <div class="col align-items-center space-between">
+                <div class="row align-items-center">
+                    <div class="selector-text">Age</div>
+                    <div id="age-selector-container"></div>
+                </div>
+                <div class="row align-items-center">
+                    <div class="selector-text">Color Encoding</div>
+                    <div id="encoding-selector-container"></div>
+                </div>
+            </div>
+        </div>
+        <div class="content">
             <div id="streamer-icons">
             </div>
             <div id="streamer-detail">
@@ -32,12 +67,12 @@
             </div>
         </div>
         <div id="gantt-content">
-            <div id="encoding-selector-container"></div>
             <div id="gantt-chart-container" height="100%">
                 <svg id="gantt-chart-svg" height="100%"></svg>
             </div>
         </div>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/6.6.2/d3.min.js" integrity="sha512-L2eTGYYQqzK5YozYyUVrJKj2ZRnHE3QzV1+1yY6VXHExStF3potRZyEcD/B6sTOe04xYxB21QNLmVTQFcgwovg==" crossorigin="anonymous"></script>
         <script src="js/index.js" async defer></script>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
     </body>
 </html>

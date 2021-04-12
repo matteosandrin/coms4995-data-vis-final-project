@@ -73,6 +73,17 @@ body {
     font-weight: bold;
 }
 
+#selection-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.selection-group {
+    border: 2px solid blueviolet;
+    padding: 4px;
+}
+
 #gantt-chart-container {
     display: flex;
     width: 100%;
@@ -87,6 +98,12 @@ body {
     flex-direction: column;
     align-items: center;
     margin: auto;
-    padding-top: 10px;
     width: 80%;
+}
+
+.selector-text {
+    margin: 10px;
+    font-size: 18px;
+    font-weight: bold;
+    margin-left: 100px;
 }
