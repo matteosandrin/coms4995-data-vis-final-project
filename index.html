@@ -76,7 +76,34 @@
                 <div class="top-100"><b>The Top 100</b></div>
                 <p>Explore the top 100 streamers with our interactive tool.</p>
             </div>
-            <div class="selectors">
+            <div class="streamer-tiles-container">
+                <div id="streamer-icons">
+                </div>
+                <div id="streamer-panel">
+                    <div id="streamer-detail">
+                        <div class="icon-large">
+                            <img src=""/>
+                        </div>
+                        <div class="streamer-title"></div>
+                        <div class="streamer-field" id="streamer-rank">
+                            <span class="label"></span><span class="value"></span>
+                        </div>
+                        <div class="streamer-field" id="streamer-followers">
+                            <span class="label"></span><span class="value"></span>
+                        </div>
+                        <div class="streamer-field" id="streamer-watch-time">
+                            <span class="label"></span><span class="value"></span>
+                        </div>
+                        <div class="streamer-field" id="streamer-language">
+                            <span class="label"></span><span class="value"></span>
+                        </div>
+                    </div>
+                    <div id="streamer-small-chart">
+                        <svg id="small-chart-svg"></svg>
+                    </div>                
+                </div>
+            </div>
+            <div id="selection-panel">
                 <div class="col">
                     <div class="row align-items-center">
                         <div class="selector-text">Gender</div>
@@ -109,33 +136,6 @@
                         <div class="selector-text">Color Encoding</div>
                         <div id="encoding-selector-container"></div>
                     </div>
-                </div>
-            </div>
-            <div class="streamer-tiles-container">
-                <div id="streamer-icons">
-                </div>
-                <div id="streamer-panel">
-                    <div id="streamer-detail">
-                        <div class="icon-large">
-                            <img src=""/>
-                        </div>
-                        <div class="streamer-title"></div>
-                        <div class="streamer-field" id="streamer-rank">
-                            <span class="label"></span><span class="value"></span>
-                        </div>
-                        <div class="streamer-field" id="streamer-followers">
-                            <span class="label"></span><span class="value"></span>
-                        </div>
-                        <div class="streamer-field" id="streamer-watch-time">
-                            <span class="label"></span><span class="value"></span>
-                        </div>
-                        <div class="streamer-field" id="streamer-language">
-                            <span class="label"></span><span class="value"></span>
-                        </div>
-                    </div>
-                    <div id="streamer-small-chart">
-                        <svg id="small-chart-svg"></svg>
-                    </div>                
                 </div>
             </div>
             <div id="gantt-content">

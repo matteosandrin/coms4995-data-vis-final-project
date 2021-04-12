@@ -100,10 +100,6 @@ a {
     width: 100%;
 }
 
-#streamer-detail {
-    padding: 6px 16px;
-}
-
 .streamer-title {
     font-size: 4em;
     font-weight: bold;
@@ -128,7 +124,7 @@ a {
 
 #selection-panel {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
 }
 
