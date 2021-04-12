@@ -92,15 +92,15 @@ d3.csv("https://raw.githubusercontent.com/matteosandrin/coms4995-data-vis-final-
         
         const date_extent = d3.extent(data.map(d => d.start));
         const total_months = dateDiff(date_extent[0], date_extent[1]);
-        const text_padding = 180;
+        const text_padding = 240;
         const date_scale = d3.scaleLinear()
             .domain([0, total_months])
             .range([text_padding, screen.width]);
 
-        const height = 2400;
+        const height = 2800;
             
         const width_padding = 1;
-        const height_padding = 8;
+        const height_padding = 14;
         const num_streamers = 100;
         const rect_height = (height - margin.top - margin.bottom)/(num_streamers+1) - height_padding;
         
@@ -139,7 +139,7 @@ d3.csv("https://raw.githubusercontent.com/matteosandrin/coms4995-data-vis-final-
             .attr("text-anchor", "end")
             .attr("font-weight", "bold")
             .attr("fill", "white")
-            .attr("font-size", 15)
+            .attr("font-size", 20)
             .text("Streamer (rank)");
 
         d3.select("#gantt-chart-svg")
@@ -153,7 +153,7 @@ d3.csv("https://raw.githubusercontent.com/matteosandrin/coms4995-data-vis-final-
                 .text((d, i) => d + " (" + (i+1) + ")")
                 .attr("text-anchor", "end")
                 .attr("fill", "white")
-                .attr("font-size", 15)
+                .attr("font-size", 20)
                 .on("mouseover", function(event, selectedData) {
                     mouseOverText(this, selectedData);
                 })
