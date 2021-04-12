@@ -59,9 +59,13 @@ d3.csv("data/ages.csv").then(function(data){
     .attr("x", function(d) { return x(d.age); })
     .attr("y", function(d) { return y(d.percentage)} )
     .attr("width", x.bandwidth())
-    .attr("height", function(d) { console.log(y(d.percentage)); return barheight - y(d.percentage); })
+    .attr("height", function(d) { return barheight - y(d.percentage); })
     .attr("fill", "#69b3a2")
 })
+
+function numberWithCommas(x) {
+  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
 
 var data1 = {}
 var data2 = {}
@@ -95,7 +99,7 @@ var tabulate = function (data,columns) {
         })
         .enter()
         .append('td')
-        .text(function (d) { return d })
+        .text(function (d) { return numberWithCommas(d) })
   
     return table;
   }
@@ -161,7 +165,7 @@ var tabulate = function (data,columns) {
     u.enter()
     .data(data_ready)
     .append('text')
-    .text(function(d) { console.log(d); return d.data[0]})
+    .text(function(d) { return d.data[0]})
     .transition()
     .duration(1000)
     .attr("transform", function(d) { return "translate(" + arcGenerator.centroid(d) + ")";  })
