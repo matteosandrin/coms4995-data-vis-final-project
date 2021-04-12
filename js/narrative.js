@@ -45,9 +45,9 @@ var tabulate = function (data,columns) {
 
   var width = 450
   var height = 450
-  margin = 40
+  var pie_margin = 40
 
-  var radius = Math.min(width, height) / 2 - margin
+  var radius = Math.min(width, height) / 2 - pie_margin
 
   var svg = d3.select("#pie-container")
   .append("svg").attr("width", width)
