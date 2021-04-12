@@ -1,39 +1,4 @@
 let currStreamer = {};
-d3.csv("https://raw.githubusercontent.com/matteosandrin/coms4995-data-vis-final-project/gantt-chart/data/top_100_streamers_last_365_days.csv")
-    .then(function (data) {
-        currStreamer = data[0];
-        setStreamerDetail(currStreamer);
-        d3.select('#streamer-icons')
-            .selectAll('div')
-            .data(data)
-            .enter()
-                .append('div')
-                    .attr('class', 'icon')
-                    .on('mouseover', function () {
-                        d3.select(this)
-                            .each(function (d) {setStreamerDetail(d)})
-                            .transition()
-                                .duration(50)
-                                .style("opacity", "0.5");
-                    })
-                    .on('mouseout', function () {
-                        d3.select(this)
-                            .each(function (d) {setStreamerDetail(currStreamer)})
-                            .transition()
-                                .duration(50)
-                                .style("opacity", "1.0");
-                    })
-                    .on('click', function() {
-                        d3.select(this)
-                            .each(function (d) {
-                                currStreamer = d;
-                                markAsSelected(this);
-                            })
-                    })
-                .append('img')
-                    .attr('src', d => getImageUrl(d));
-    }
-);
 
 // Encoding selector for Gantt
 const encoding_options = [
@@ -84,14 +49,54 @@ const data_selection_options = {
 
 const margin = {top: 110, left: 0, right: 20, bottom: 20};
 
+var data = [];
+var total_months = 0;
+var first_month = 0;
+
 // Gantt Chart
+d3.csv("https://raw.githubusercontent.com/matteosandrin/coms4995-data-vis-final-project/gantt-chart/data/top_100_streamers_last_365_days.csv")
+    .then(function (tile_data) {
 d3.csv("https://raw.githubusercontent.com/matteosandrin/coms4995-data-vis-final-project/gantt-chart/data/gantt_month_data.csv")
     .then(function (raw_data) {
-        const data = getStreamsData(raw_data);
+        currStreamer = tile_data[0];
+        setStreamerDetail(currStreamer);
+        d3.select('#streamer-icons')
+            .selectAll('div')
+            .data(tile_data)
+            .enter()
+                .append('div')
+                    .attr('class', 'icon')
+                    .on('mouseover', function () {
+                        d3.select(this)
+                            .each(function (d) {setStreamerDetail(d)})
+                            .transition()
+                                .duration(50)
+                                .style("opacity", "0.5");
+                    })
+                    .on('mouseout', function () {
+                        d3.select(this)
+                            .each(function (d) {setStreamerDetail(currStreamer)})
+                            .transition()
+                                .duration(50)
+                                .style("opacity", "1.0");
+                    })
+                    .on('click', function() {
+                        d3.select(this)
+                            .each(function (d) {
+                                currStreamer = d;
+                                markAsSelected(this);
+                            })
+                        
+                        createSmallChart(data, currStreamer.Rank, encoding_options[0], total_months, first_month);
+                    })
+                .append('img')
+                    .attr('src', d => getImageUrl(d));
+
+        data = getStreamsData(raw_data);
         gantt_data = data;
         
         const date_extent = d3.extent(data.map(d => d.start));
-        const total_months = dateDiff(date_extent[0], date_extent[1]);
+        total_months = dateDiff(date_extent[0], date_extent[1]);
         const text_padding = 240;
         const date_scale = d3.scaleLinear()
             .domain([0, total_months])
@@ -223,9 +228,12 @@ d3.csv("https://raw.githubusercontent.com/matteosandrin/coms4995-data-vis-final-
                 .text(function (d) { return d; });
 
         makeLegend(encoding_options[0]);
-        createSmallChart(data, currStreamer.Rank, encoding_options[0], total_months, date_extent[0]);
+
+        first_month = date_extent[0];
+        createSmallChart(data, currStreamer.Rank, encoding_options[0], total_months, first_month);
     }
-);
+)
+});
 
 const color_obj = {
     'Stream Count': {
@@ -597,6 +605,9 @@ function makeLegend(encoding) {
 }
 
 function createSmallChart(data, curr_rank, encoding, total_months, first_month) {
+    d3.select("#small-chart-svg").selectAll('rect').remove();
+    d3.select("#small-chart-svg").selectAll('text').remove();
+
     const chart_height = 1000;
     const chart_margin = {left: 150, right: 40, top: 200, bottom: 40};
     d3.select("#small-chart-svg")
