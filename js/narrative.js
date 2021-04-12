@@ -60,7 +60,7 @@ d3.csv("data/ages.csv").then(function(data){
     .attr("y", function(d) { return y(d.percentage)} )
     .attr("width", x.bandwidth())
     .attr("height", function(d) { return barheight - y(d.percentage); })
-    .attr("fill", "#69b3a2")
+    .attr("fill", "#beff00")
 })
 
 function numberWithCommas(x) {
