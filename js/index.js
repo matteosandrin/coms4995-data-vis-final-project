@@ -82,7 +82,7 @@ const data_selection_options = {
     'age': ['All', 'Less than 18', '18-25', '26-39', '40-59', '60 and up'],
 };
 
-const margin = {top: 100, left: 0, right: 20, bottom: 20};
+const margin = {top: 110, left: 0, right: 20, bottom: 20};
 
 // Gantt Chart
 d3.csv("https://raw.githubusercontent.com/matteosandrin/coms4995-data-vis-final-project/gantt-chart/data/gantt_month_data.csv")
@@ -223,6 +223,7 @@ d3.csv("https://raw.githubusercontent.com/matteosandrin/coms4995-data-vis-final-
                 .text(function (d) { return d; });
 
         makeLegend(encoding_options[0]);
+        createSmallChart(data, currStreamer.Rank, encoding_options[0], total_months, date_extent[0]);
     }
 );
 
@@ -593,4 +594,130 @@ function makeLegend(encoding) {
         .style("font-size", "14px")
         .call(d3.axisBottom(x).tickSize(15).ticks(4).tickFormat((d, i) => `${d}${d == curr_domain[1] ? '+' : ''}`))
         .select(".domain").remove();
+}
+
+function createSmallChart(data, curr_rank, encoding, total_months, first_month) {
+    const chart_height = 800;
+    const chart_margin = {left: 150, right: 40, top: 200, bottom: 40};
+    d3.select("#small-chart-svg")
+        .attr("viewBox", [0, 0, screen.width, chart_height]);
+
+    const streamer_data = data.filter(d => d.rank == curr_rank);
+    const extract_field = color_obj[encoding]['field'];
+    const y_domain = [0, d3.extent(streamer_data.map(d => extract_field(d)))[1]];
+
+    const y_scale  = d3.scaleLinear()
+        .domain(y_domain)
+        .range([0, chart_height - chart_margin.top]);
+
+    const x_scale = d3.scaleLinear()
+        .domain([0, total_months])
+        .range([chart_margin.left, screen.width - chart_margin.right]);
+
+    const x_axis_ticks = [
+        {date: new Date(2015, 6), label: '7/2015'},
+        {date: new Date(2016, 0), label: '1/2016'},
+        {date: new Date(2017, 0), label: '1/2017'},
+        {date: new Date(2018, 0), label: '1/2018'},
+        {date: new Date(2019, 0), label: '1/2019'},
+        {date: new Date(2020, 0), label: '1/2020'},
+        {date: new Date(2020, 7), label: '8/2020'},
+    ];
+
+    const y_axis_ticks = [
+        y_domain[0],
+        Math.round((y_domain[1] - y_domain[0])/5, 0),
+        Math.round(2*(y_domain[1] - y_domain[0])/5, 0),
+        Math.round(3*(y_domain[1] - y_domain[0])/5),
+        Math.round(4*(y_domain[1] - y_domain[0])/5),
+        Math.round(y_domain[1]),
+    ];
+
+    d3.select("#small-chart-svg")
+        .append("line")
+        .attr("x1", chart_margin.left)
+        .attr("x2", screen.width - chart_margin.right)
+        .attr("y1", chart_height - chart_margin.bottom)
+        .attr("y2", chart_height - chart_margin.bottom)
+        .attr("stroke-weight", 5)
+        .attr("stroke", "white");
+
+    d3.select("#small-chart-svg")
+        .append("line")
+        .attr("x1", chart_margin.left)
+        .attr("x2", chart_margin.left)
+        .attr("y1", 100)
+        .attr("y2", chart_height - chart_margin.bottom)
+        .attr("stroke-weight", 5)
+        .attr("stroke", "white");
+
+    d3.select("#small-chart-svg")
+        .append("g")
+        .selectAll("text")
+        .data(x_axis_ticks)
+        .join("text")
+            .attr("x", d => x_scale(dateDiff(d.date, first_month)) + 10)
+            .attr("y", chart_height - chart_margin.bottom + 30)
+            .attr("fill", "white")
+            .attr("font-size", 25)
+            .text(d => d.label);
+
+    d3.select("#small-chart-svg")
+        .append("g")
+        .selectAll("text")
+        .data(y_axis_ticks)
+        .join("text")
+            .attr("x", chart_margin.left - 30)
+            .attr("y", d => chart_height - chart_margin.bottom - y_scale(d))
+            .attr("fill", "white")
+            .attr("font-size", 25)
+            .attr("text-anchor", "end")
+            .text(d => numberWithCommas(d));
+
+    d3.select("#small-chart-svg")
+        .append("g")
+        .selectAll("line")
+        .data(x_axis_ticks)
+        .join("line")
+            .attr("x1", d => x_scale(dateDiff(d.date, first_month)))
+            .attr("x2", d => x_scale(dateDiff(d.date, first_month)))
+            .attr("y1", chart_height - chart_margin.bottom + 30)
+            .attr("y2", chart_height - chart_margin.bottom)
+            .attr("stroke", "white");
+
+    d3.select("#small-chart-svg")
+        .append("g")
+        .selectAll("line")
+        .data(y_axis_ticks)
+        .join("line")
+            .attr("x1", chart_margin.left - 10)
+            .attr("x2", chart_margin.left)
+            .attr("y1", d => chart_height - chart_margin.bottom - y_scale(d))
+            .attr("y2", d => chart_height - chart_margin.bottom - y_scale(d))
+            .attr("stroke", "white");
+
+    const bar_padding = 5;
+    const bar_width = (screen.width - margin.left - margin.right)/total_months - bar_padding;
+
+    d3.select('#small-chart-svg')
+        .append('g')
+        .selectAll('rect')
+        .data(streamer_data)
+        .join('rect')
+            .attr("width", bar_width)
+            .attr("height", d => y_scale(extract_field(d)))
+            .attr("y", d => chart_height - chart_margin.bottom - y_scale(extract_field(d)))
+            .attr("x", d => x_scale(dateDiff(d.start, first_month)))
+            .attr("fill", "white")
+            .attr("opacity", 1);
+
+
+    d3.select("#small-chart-svg")
+        .append("text")
+        .attr("x", screen.width/2)
+        .attr("y", chart_margin.top/2.5)
+        .text(streamer_data[0].name + "'s " + encoding)
+        .attr("fill", "white")
+        .attr("font-size", 40)
+        .attr("text-anchor", "middle");
 }
