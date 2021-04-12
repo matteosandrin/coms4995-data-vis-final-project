@@ -55,7 +55,34 @@
                 <img src="img/Narrative/Streamer Ages.png" alt="stacked bar charts">
                 <p>Some have questions about the lasting potential of Twitch. Is a business model based around voluntary subscriptions and donations sustainable? Will the lack of diversity on Twitch be its downfall? Will twitch expand to a wider audience beyond gaming? We invite you to think about these questions as you explore the backgrounds, personalities, and stories of the Twitch elite. </p>
             </div>
-            <div class="selectors">
+            <div class="streamer-tiles-container">
+                <div id="streamer-icons">
+                </div>
+                <div id="streamer-panel">
+                    <div id="streamer-detail">
+                        <div class="icon-large">
+                            <img src=""/>
+                        </div>
+                        <div class="streamer-title"></div>
+                        <div class="streamer-field" id="streamer-rank">
+                            <span class="label"></span><span class="value"></span>
+                        </div>
+                        <div class="streamer-field" id="streamer-followers">
+                            <span class="label"></span><span class="value"></span>
+                        </div>
+                        <div class="streamer-field" id="streamer-watch-time">
+                            <span class="label"></span><span class="value"></span>
+                        </div>
+                        <div class="streamer-field" id="streamer-language">
+                            <span class="label"></span><span class="value"></span>
+                        </div>
+                    </div>
+                    <div id="streamer-small-chart">
+                        <svg id="small-chart-svg"></svg>
+                    </div>                
+                </div>
+            </div>
+            <div id="selection-panel">
                 <div class="col">
                     <div class="row align-items-center">
                         <div class="selector-text">Gender</div>
@@ -88,33 +115,6 @@
                         <div class="selector-text">Color Encoding</div>
                         <div id="encoding-selector-container"></div>
                     </div>
-                </div>
-            </div>
-            <div class="streamer-tiles-container">
-                <div id="streamer-icons">
-                </div>
-                <div id="streamer-panel">
-                    <div id="streamer-detail">
-                        <div class="icon-large">
-                            <img src=""/>
-                        </div>
-                        <div class="streamer-title"></div>
-                        <div class="streamer-field" id="streamer-rank">
-                            <span class="label"></span><span class="value"></span>
-                        </div>
-                        <div class="streamer-field" id="streamer-followers">
-                            <span class="label"></span><span class="value"></span>
-                        </div>
-                        <div class="streamer-field" id="streamer-watch-time">
-                            <span class="label"></span><span class="value"></span>
-                        </div>
-                        <div class="streamer-field" id="streamer-language">
-                            <span class="label"></span><span class="value"></span>
-                        </div>
-                    </div>
-                    <div id="streamer-small-chart">
-                        <svg id="small-chart-svg"></svg>
-                    </div>                
                 </div>
             </div>
             <div id="gantt-content">
