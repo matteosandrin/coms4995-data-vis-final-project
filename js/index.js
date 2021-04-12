@@ -329,7 +329,6 @@ function getStreamsData(raw_data) {
             avg_stream_length: parseFloat(curr_obj['avg_stream_length']),
             avg_viewers: parseFloat(curr_obj['avg_viewers']),
             avg_views_per_hour: parseFloat(curr_obj['avg_views_per_hour']),
-            selected: true,
         });
     }
     
@@ -426,7 +425,7 @@ function mouseOverGantt(t, selectedData) {
         .attr("font-family", "sans-serif")
         .attr("font-size", "16")
         .attr("font-weight", "bold")
-        .attr("fill", "black")
+        .attr("fill", "white")
         .text(`${selectedData.name}`);
 
     tgrp.append("text")
@@ -436,8 +435,78 @@ function mouseOverGantt(t, selectedData) {
         .attr("font-family", "sans-serif")
         .attr("font-size", "16")
         .attr("font-style", "italic")
-        .attr("fill", "black")
-        .text(`${selectedData.rank}`);
+        .attr("fill", "white")
+        .text(`Rank: ${selectedData.rank}`);
+
+    tgrp.append("text")
+        .attr("x", 5)
+        .attr("y", 50)
+        .attr("text-anchor", "left")
+        .attr("font-family", "sans-serif")
+        .attr("font-size", "16")
+        .attr("font-style", "italic")
+        .attr("fill", "white")
+        .text(`Month: ${selectedData.start.getMonth()+1 + "/" + selectedData.start.getFullYear()}`);
+
+    tgrp.append("text")
+        .attr("x", 5)
+        .attr("y", 66)
+        .attr("text-anchor", "left")
+        .attr("font-family", "sans-serif")
+        .attr("font-size", "16")
+        .attr("font-style", "italic")
+        .attr("fill", "white")
+        .text(`${numberWithCommas(selectedData.stream_count)} Stream${selectedData.stream_count == 1 ? '' : 's'}`);
+
+    tgrp.append("text")
+        .attr("x", 5)
+        .attr("y", 82)
+        .attr("text-anchor", "left")
+        .attr("font-family", "sans-serif")
+        .attr("font-size", "16")
+        .attr("font-style", "italic")
+        .attr("fill", "white")
+        .text(`Avg Followers Gained: ${numberWithCommas(Math.round(selectedData.avg_followers_gained))}`);
+
+    tgrp.append("text")
+        .attr("x", 5)
+        .attr("y", 98)
+        .attr("text-anchor", "left")
+        .attr("font-family", "sans-serif")
+        .attr("font-size", "16")
+        .attr("font-style", "italic")
+        .attr("fill", "white")
+        .text(`Avg Peak Viewers: ${numberWithCommas(Math.round(selectedData.avg_peak_viewers))}`);
+
+    tgrp.append("text")
+        .attr("x", 5)
+        .attr("y", 114)
+        .attr("text-anchor", "left")
+        .attr("font-family", "sans-serif")
+        .attr("font-size", "16")
+        .attr("font-style", "italic")
+        .attr("fill", "white")
+        .text(`Avg Stream Length: ${numberWithCommas(Math.round(selectedData.avg_stream_length))} minutes`);
+
+    tgrp.append("text")
+        .attr("x", 5)
+        .attr("y", 130)
+        .attr("text-anchor", "left")
+        .attr("font-family", "sans-serif")
+        .attr("font-size", "16")
+        .attr("font-style", "italic")
+        .attr("fill", "white")
+        .text(`Avg Viewers: ${numberWithCommas(Math.round(selectedData.avg_viewers))}`);
+
+    tgrp.append("text")
+        .attr("x", 5)
+        .attr("y", 146)
+        .attr("text-anchor", "left")
+        .attr("font-family", "sans-serif")
+        .attr("font-size", "16")
+        .attr("font-style", "italic")
+        .attr("fill", "white")
+        .text(`Avg Views per Hour: ${numberWithCommas(Math.round(selectedData.avg_views_per_hour))}`);
 
     var text_width = null;
 
@@ -446,14 +515,14 @@ function mouseOverGantt(t, selectedData) {
             text_width = this.parentNode.getBBox().width;
             return this.parentNode.getBBox().width + 10;
         })
-        .attr("height", "50")
-        .attr("fill", "white")
+        .attr("height", "160")
+        .attr("fill", "blueviolet")
         .attr("stroke", "black")
         .attr("stroke-width", 1)
         .lower();
 
     const curr_x = parseFloat(d3.select(t).attr("x"));
-    const x_offset = 20;
+    const x_offset = 30;
     var xpos = curr_x + x_offset;
     var ypos = parseFloat(d3.select(t).attr("y")) - 40;
     tgrp.attr("transform", `translate(${xpos}, ${ypos})`);
