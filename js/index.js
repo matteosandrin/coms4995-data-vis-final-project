@@ -139,7 +139,8 @@ d3.csv("https://raw.githubusercontent.com/matteosandrin/coms4995-data-vis-final-
             .attr("text-anchor", "end")
             .attr("font-weight", "bold")
             .attr("fill", "white")
-            .text("Streamer Name (rank)");
+            .attr("font-size", 15)
+            .text("Streamer (rank)");
 
         d3.select("#gantt-chart-svg")
             .append("g")
@@ -152,7 +153,7 @@ d3.csv("https://raw.githubusercontent.com/matteosandrin/coms4995-data-vis-final-
                 .text((d, i) => d + " (" + (i+1) + ")")
                 .attr("text-anchor", "end")
                 .attr("fill", "white")
-                .attr("font-size", 11)
+                .attr("font-size", 15)
                 .on("mouseover", function(event, selectedData) {
                     mouseOverText(this, selectedData);
                 })
@@ -182,7 +183,7 @@ d3.csv("https://raw.githubusercontent.com/matteosandrin/coms4995-data-vis-final-
                 .attr("text-anchor", "start")
                 .attr("stroke-weight", .5)
                 .attr("fill", "white")
-                .attr("font-size", 18);
+                .attr("font-size", 20);
 
         d3.select("#gantt-chart-svg")
             .append("g")
@@ -191,7 +192,7 @@ d3.csv("https://raw.githubusercontent.com/matteosandrin/coms4995-data-vis-final-
             .join("line")
                 .attr("x1", d => date_scale(dateDiff(d.date, date_extent[0])))
                 .attr("x2", d => date_scale(dateDiff(d.date, date_extent[0])))
-                .attr("y1", margin.top + rect_height + height_padding - 30)
+                .attr("y1", margin.top + rect_height + height_padding - 40)
                 .attr("y2", height - margin.bottom)
                 .attr("stroke", "white");
 
