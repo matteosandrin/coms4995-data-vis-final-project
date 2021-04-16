@@ -105,7 +105,7 @@ d3.csv("https://raw.githubusercontent.com/matteosandrin/coms4995-data-vis-final-
 
         const height = 2800;
             
-        const width_padding = 1;
+        const width_padding = -.2;
         const height_padding = 14;
         const num_streamers = 100;
         const rect_height = (height - margin.top - margin.bottom)/(num_streamers+1) - height_padding;
@@ -614,7 +614,7 @@ function createSmallChart(data, curr_rank, encoding, total_months, first_month) 
     d3.select("#small-chart-svg").selectAll('text').remove();
 
     const chart_height = 1000;
-    const chart_margin = {left: 150, right: 40, top: 200, bottom: 40};
+    const chart_margin = {left: 150, right: 40, top: 200, bottom: 175};
     d3.select("#small-chart-svg")
         .attr("viewBox", [0, 0, screen.width, chart_height]);
 
@@ -672,10 +672,11 @@ function createSmallChart(data, curr_rank, encoding, total_months, first_month) 
         .selectAll("text")
         .data(x_axis_ticks)
         .join("text")
-            .attr("x", d => x_scale(dateDiff(d.date, first_month)) + 10)
-            .attr("y", chart_height - chart_margin.bottom + 30)
+            //.attr("x", d => x_scale(dateDiff(d.date, first_month)) + 10)
+            //.attr("y", chart_height - chart_margin.bottom + 30)
             .attr("fill", "white")
-            .attr("font-size", 25)
+            .attr("font-size", 40)
+            .attr("transform", d=>`translate(${x_scale(dateDiff(d.date, first_month))}, ${chart_height -50}), rotate(-45)`)
             .text(d => d.label);
 
     d3.select("#small-chart-svg")
@@ -724,7 +725,7 @@ function createSmallChart(data, curr_rank, encoding, total_months, first_month) 
             .attr("height", d => y_scale(extract_field(d)))
             .attr("y", d => chart_height - chart_margin.bottom - y_scale(extract_field(d)))
             .attr("x", d => x_scale(dateDiff(d.start, first_month)))
-            .attr("fill", "white")
+            .attr("fill", "blueviolet")
             .attr("opacity", 1);
 
 
