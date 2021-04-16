@@ -54,11 +54,8 @@ var total_months = 0;
 var first_month = 0;
 var curr_encoding = encoding_options[0];
 
-// Gantt Chart
-d3.csv("https://raw.githubusercontent.com/matteosandrin/coms4995-data-vis-final-project/gantt-chart/data/top_100_streamers_last_365_days.csv")
+d3.csv("./data/top_100_streamers_last_365_days.csv")
     .then(function (tile_data) {
-d3.csv("https://raw.githubusercontent.com/matteosandrin/coms4995-data-vis-final-project/gantt-chart/data/gantt_month_data.csv")
-    .then(function (raw_data) {
         currStreamer = tile_data[0];
         setStreamerDetail(currStreamer);
         d3.select('#streamer-icons')
@@ -92,6 +89,12 @@ d3.csv("https://raw.githubusercontent.com/matteosandrin/coms4995-data-vis-final-
                     })
                 .append('img')
                     .attr('src', d => getImageUrl(d));
+    }
+);
+
+// Gantt Chart
+d3.csv("./data/gantt_month_data.csv")
+    .then(function (raw_data) {
 
         data = getStreamsData(raw_data);
         gantt_data = data;
@@ -233,8 +236,7 @@ d3.csv("https://raw.githubusercontent.com/matteosandrin/coms4995-data-vis-final-
         first_month = date_extent[0];
         createSmallChart(data, currStreamer.Rank, curr_encoding, total_months, first_month);
     }
-)
-});
+);
 
 const color_obj = {
     'Stream Count': {
