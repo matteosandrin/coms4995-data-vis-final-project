@@ -20,9 +20,7 @@ const selection_options = [
 ];
         
 var select_encoding = d3.select('#encoding-selector-container')
-    .append('select')
-        .attr('class', 'select')
-        .attr("id", "encoding-selector")
+    .select('select')
         .on('change', changeEncoding);
 
 select_encoding
@@ -206,9 +204,7 @@ d3.csv("./data/gantt_month_data.csv")
                 .attr("stroke", "white");
 
         var select_nationality = d3.select('#nationality-selector-container')
-            .append('select')
-                .attr('class', 'select')
-                .attr("id", "nationality-selector")
+            .select('select')
                 .on('change', function() { changeNationality(data, data_selection_info) });
 
         select_nationality
@@ -219,9 +215,7 @@ d3.csv("./data/gantt_month_data.csv")
                 .text(function (d) { return d; });
 
         var select_age = d3.select('#age-selector-container')
-            .append('select')
-                .attr('class', 'select')
-                .attr("id", "age-selector")
+            .select('select')
                 .on('change', function() { changeAge(data, data_selection_info) });
 
         select_age

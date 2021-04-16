@@ -119,37 +119,39 @@
                 </div>
             </div>
             <div id="selection-panel">
-                <div class="col">
-                    <div class="row align-items-center selection-item">
-                        <div class="selector-text">Gender</div>
-                        <div id="gender-buttons">
-                            <button onclick="selectStreamers(gantt_data, data_selection_info, 'gender', 'All')" class="btn btn-primary">
-                                All
-                            </button>
-                            <button onclick="selectStreamers(gantt_data, data_selection_info, 'gender', 'Male')" class="btn btn-primary">
-                                Male
-                            </button>
-                            <button onclick="selectStreamers(gantt_data, data_selection_info, 'gender', 'Female')" class="btn btn-primary">
-                                Female
-                            </button>
-                            <button onclick="selectStreamers(gantt_data, data_selection_info, 'gender', 'NA')" class="btn btn-primary">
-                                N/A
-                            </button>
-                        </div>
-                    </div>
-                    <div class="row align-items-center selection-item">
-                        <div class="selector-text">Nationality</div>
-                        <div id="nationality-selector-container"></div>
+                <div>
+                    <div class="selector-text">Gender</div>
+                    <div class="btn-group" role="group" id="gender-buttons">
+                        <button onclick="selectStreamers(gantt_data, data_selection_info, 'gender', 'All')" class="btn btn-primary">
+                            All
+                        </button>
+                        <button onclick="selectStreamers(gantt_data, data_selection_info, 'gender', 'Male')" class="btn btn-primary">
+                            Male
+                        </button>
+                        <button onclick="selectStreamers(gantt_data, data_selection_info, 'gender', 'Female')" class="btn btn-primary">
+                            Female
+                        </button>
+                        <button onclick="selectStreamers(gantt_data, data_selection_info, 'gender', 'NA')" class="btn btn-primary">
+                            N/A
+                        </button>
                     </div>
                 </div>
-                <div class="col align-items-center space-between">
-                    <div class="row align-items-center selection-item">
-                        <div class="selector-text">Age</div>
-                        <div id="age-selector-container"></div>
+                <div>
+                    <div class="selector-text">Nationality</div>
+                    <div id="nationality-selector-container">
+                        <select class="select form-control" id="nationality-selector"></select>
                     </div>
-                    <div class="row align-items-center selection-item">
-                        <div class="selector-text">Color Encoding</div>
-                        <div id="encoding-selector-container"></div>
+                </div>
+                <div>
+                    <div class="selector-text">Age</div>
+                    <div id="age-selector-container">
+                        <select class="select form-control" id="age-selector"></select>
+                    </div>
+                </div>
+                <div>
+                    <div class="selector-text">Color Encoding</div>
+                    <div id="encoding-selector-container">
+                        <select class="select form-control" id="encoding-selector"></select>
                     </div>
                 </div>
             </div>
