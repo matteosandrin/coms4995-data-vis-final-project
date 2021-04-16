@@ -118,6 +118,10 @@ var tabulate = function (data,columns) {
 
   var radius = Math.min(width, height) / 2 - pie_margin
 
+  var arc = d3.arc()
+    .outerRadius(radius * 1.0)
+    .innerRadius(radius * 0.0);
+
   var svg = d3.select("#pie-container")
   .append("svg").attr("width", width)
   .attr("height", height)
@@ -150,14 +154,18 @@ var tabulate = function (data,columns) {
     .append('path')
     .merge(u)
     .transition()
-    .duration(1000)
-    .attr('d', d3.arc()
-        .innerRadius(0)
-        .outerRadius(radius)
-    )
-    .attr('fill', function(d) {
-        return(color(d.data[0]))
-    })
+        .duration(1000)
+        .attrTween("d", function(d) {
+          var interpolate = d3.interpolate(this._current, d);
+          var _this = this;
+          return function(t) {
+              _this._current = interpolate(t);
+              return arc(_this._current);
+            };
+        })
+        .attr('fill', function(d) {
+            return(color(d.data[0]))
+        })
     .attr("stroke", "white")
     .style("stroke-width", "2px")
     .style("opacity", 1)
