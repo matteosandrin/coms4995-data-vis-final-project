@@ -129,9 +129,9 @@ a {
 }
 
 #selection-panel {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    column-gap: 3rem;
     margin: 1rem 0rem;
 }
 
@@ -146,6 +146,10 @@ a {
 
 .selector-text {
     margin-right: 1rem;
+}
+
+#gender-buttons {
+    width: 100%;
 }
 
 #gantt-chart-container {
