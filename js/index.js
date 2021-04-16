@@ -54,7 +54,7 @@ var total_months = 0;
 var first_month = 0;
 var curr_encoding = encoding_options[0];
 
-d3.csv("./data/top_100_streamers_last_365_days.csv")
+d3.csv("./data/top_100_streamers_with_categorical.csv")
     .then(function (tile_data) {
         currStreamer = tile_data[0];
         setStreamerDetail(currStreamer);
