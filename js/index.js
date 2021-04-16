@@ -20,9 +20,7 @@ const selection_options = [
 ];
         
 var select_encoding = d3.select('#encoding-selector-container')
-    .append('select')
-        .attr('class', 'select')
-        .attr("id", "encoding-selector")
+    .select('select')
         .on('change', changeEncoding);
 
 select_encoding
@@ -54,11 +52,8 @@ var total_months = 0;
 var first_month = 0;
 var curr_encoding = encoding_options[0];
 
-// Gantt Chart
-d3.csv("https://raw.githubusercontent.com/matteosandrin/coms4995-data-vis-final-project/gantt-chart/data/top_100_streamers_last_365_days.csv")
+d3.csv("./data/top_100_streamers_with_categorical.csv")
     .then(function (tile_data) {
-d3.csv("https://raw.githubusercontent.com/matteosandrin/coms4995-data-vis-final-project/gantt-chart/data/gantt_month_data.csv")
-    .then(function (raw_data) {
         currStreamer = tile_data[0];
         setStreamerDetail(currStreamer);
         d3.select('#streamer-icons')
@@ -92,6 +87,12 @@ d3.csv("https://raw.githubusercontent.com/matteosandrin/coms4995-data-vis-final-
                     })
                 .append('img')
                     .attr('src', d => getImageUrl(d));
+    }
+);
+
+// Gantt Chart
+d3.csv("./data/gantt_month_data.csv")
+    .then(function (raw_data) {
 
         data = getStreamsData(raw_data);
         gantt_data = data;
@@ -203,9 +204,7 @@ d3.csv("https://raw.githubusercontent.com/matteosandrin/coms4995-data-vis-final-
                 .attr("stroke", "white");
 
         var select_nationality = d3.select('#nationality-selector-container')
-            .append('select')
-                .attr('class', 'select')
-                .attr("id", "nationality-selector")
+            .select('select')
                 .on('change', function() { changeNationality(data, data_selection_info) });
 
         select_nationality
@@ -216,9 +215,7 @@ d3.csv("https://raw.githubusercontent.com/matteosandrin/coms4995-data-vis-final-
                 .text(function (d) { return d; });
 
         var select_age = d3.select('#age-selector-container')
-            .append('select')
-                .attr('class', 'select')
-                .attr("id", "age-selector")
+            .select('select')
                 .on('change', function() { changeAge(data, data_selection_info) });
 
         select_age
@@ -233,8 +230,7 @@ d3.csv("https://raw.githubusercontent.com/matteosandrin/coms4995-data-vis-final-
         first_month = date_extent[0];
         createSmallChart(data, currStreamer.Rank, curr_encoding, total_months, first_month);
     }
-)
-});
+);
 
 const color_obj = {
     'Stream Count': {
@@ -271,13 +267,46 @@ function numberWithCommas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
+function numberToOrdinal(num) {
+    var j = num % 10,
+        k = num % 100;
+    if (j == 1 && k != 11) {
+        return num + "st";
+    }
+    if (j == 2 && k != 12) {
+        return num + "nd";
+    }
+    if (j == 3 && k != 13) {
+        return num + "rd";
+    }
+    return num + "th";
+}
+
 function setStreamerDetail(streamer) {
     d3.select('.icon-large > img').attr('src', getImageUrl(streamer));
 
     d3.select('.streamer-title').text(streamer.Channel);
 
+    if (streamer.Age != "N/A") {
+        d3.select('#streamer-age > .label').text('age');
+        d3.select('#streamer-age > .value').text(streamer.Age);
+    } else {
+        // hide if there is no nationality on record
+        d3.select('#streamer-age > .label').text('');
+        d3.select('#streamer-age > .value').text('');
+    }
+
+    if (streamer.Gender != "N/A") {
+        d3.select('#streamer-gender > .label').text('gender');
+        d3.select('#streamer-gender > .value').text(streamer.Gender);
+    } else {
+        // hide if there is no nationality on record
+        d3.select('#streamer-gender > .label').text('');
+        d3.select('#streamer-gender > .value').text('');
+    }
+
     d3.select('#streamer-rank > .label').text('rank');
-    d3.select('#streamer-rank > .value').text(streamer.Rank);
+    d3.select('#streamer-rank > .value').text(numberToOrdinal(streamer.Rank));
 
     d3.select('#streamer-followers > .label').text('followers');
     d3.select('#streamer-followers > .value').text(numberWithCommas(streamer.Followers));
@@ -288,6 +317,15 @@ function setStreamerDetail(streamer) {
 
     d3.select('#streamer-language > .label').text('language');
     d3.select('#streamer-language > .value').text(streamer.Language);
+
+    if (streamer.Nationality != "N/A") {
+        d3.select('#streamer-nationality > .label').text('nationality');
+        d3.select('#streamer-nationality > .value').text(streamer.Nationality);
+    } else {
+        // hide if there is no nationality on record
+        d3.select('#streamer-nationality > .label').text('');
+        d3.select('#streamer-nationality > .value').text('');
+    }
 }
 
 function markAsSelected(elem) {

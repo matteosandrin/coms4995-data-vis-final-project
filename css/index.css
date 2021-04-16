@@ -62,12 +62,11 @@ p{
 #streamer-icons {
     display: flex;
     flex-flow: row wrap;
-    padding: 4px;
 }
 
 .icon {
-    width: 45px;
-    height: 45px;
+    width: 41px;
+    height: 41px;
     background-color: blueviolet;
     padding: 2px;
     margin: 2px;
@@ -94,16 +93,23 @@ a {
 #streamer-panel {
     display: grid;
     grid-template-columns: 1fr 1fr;
+    margin: 2rem 0rem;
 }
 
 #streamer-small-chart {
     width: 100%;
 }
 
+#streamer-header {
+    display: grid;
+    grid-template-columns: 94px 1fr;
+}
+
 .streamer-title {
-    font-size: 4em;
+    font-size: 4rem;
     font-weight: bold;
-    line-height: 1.5;
+    line-height: 96px;
+    padding-left: 2rem;
 }
 
 .streamer-field {
@@ -115,7 +121,6 @@ a {
 
 .streamer-field > .label {
     font-variant: small-caps;
-    color: blueviolet;
 }
 
 .streamer-field > .value {
@@ -123,14 +128,27 @@ a {
 }
 
 #selection-panel {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    column-gap: 3rem;
+    margin: 1rem 0rem;
 }
 
 .selection-group {
     border: 2px solid blueviolet;
     padding: 4px;
+}
+
+.selection-item {
+    margin-bottom: 1rem;
+}
+
+.selector-text {
+    margin-right: 1rem;
+}
+
+#gender-buttons {
+    width: 100%;
 }
 
 #gantt-chart-container {
