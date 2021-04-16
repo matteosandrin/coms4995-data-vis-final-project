@@ -100,10 +100,16 @@ a {
     width: 100%;
 }
 
+#streamer-header {
+    display: grid;
+    grid-template-columns: 94px 1fr;
+}
+
 .streamer-title {
-    font-size: 4em;
+    font-size: 4rem;
     font-weight: bold;
-    line-height: 1.5;
+    line-height: 96px;
+    padding-left: 2rem;
 }
 
 .streamer-field {
