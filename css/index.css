@@ -62,12 +62,11 @@ p{
 #streamer-icons {
     display: flex;
     flex-flow: row wrap;
-    padding: 4px;
 }
 
 .icon {
-    width: 45px;
-    height: 45px;
+    width: 41px;
+    height: 41px;
     background-color: blueviolet;
     padding: 2px;
     margin: 2px;
@@ -94,6 +93,7 @@ a {
 #streamer-panel {
     display: grid;
     grid-template-columns: 1fr 1fr;
+    margin: 2rem 0rem;
 }
 
 #streamer-small-chart {

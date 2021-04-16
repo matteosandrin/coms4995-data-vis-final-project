@@ -273,13 +273,46 @@ function numberWithCommas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
+function numberToOrdinal(num) {
+    var j = num % 10,
+        k = num % 100;
+    if (j == 1 && k != 11) {
+        return num + "st";
+    }
+    if (j == 2 && k != 12) {
+        return num + "nd";
+    }
+    if (j == 3 && k != 13) {
+        return num + "rd";
+    }
+    return num + "th";
+}
+
 function setStreamerDetail(streamer) {
     d3.select('.icon-large > img').attr('src', getImageUrl(streamer));
 
     d3.select('.streamer-title').text(streamer.Channel);
 
+    if (streamer.Age != "N/A") {
+        d3.select('#streamer-age > .label').text('age');
+        d3.select('#streamer-age > .value').text(streamer.Age);
+    } else {
+        // hide if there is no nationality on record
+        d3.select('#streamer-age > .label').text('');
+        d3.select('#streamer-age > .value').text('');
+    }
+
+    if (streamer.Gender != "N/A") {
+        d3.select('#streamer-gender > .label').text('gender');
+        d3.select('#streamer-gender > .value').text(streamer.Gender);
+    } else {
+        // hide if there is no nationality on record
+        d3.select('#streamer-gender > .label').text('');
+        d3.select('#streamer-gender > .value').text('');
+    }
+
     d3.select('#streamer-rank > .label').text('rank');
-    d3.select('#streamer-rank > .value').text(streamer.Rank);
+    d3.select('#streamer-rank > .value').text(numberToOrdinal(streamer.Rank));
 
     d3.select('#streamer-followers > .label').text('followers');
     d3.select('#streamer-followers > .value').text(numberWithCommas(streamer.Followers));
@@ -290,6 +323,15 @@ function setStreamerDetail(streamer) {
 
     d3.select('#streamer-language > .label').text('language');
     d3.select('#streamer-language > .value').text(streamer.Language);
+
+    if (streamer.Nationality != "N/A") {
+        d3.select('#streamer-nationality > .label').text('nationality');
+        d3.select('#streamer-nationality > .value').text(streamer.Nationality);
+    } else {
+        // hide if there is no nationality on record
+        d3.select('#streamer-nationality > .label').text('');
+        d3.select('#streamer-nationality > .value').text('');
+    }
 }
 
 function markAsSelected(elem) {
