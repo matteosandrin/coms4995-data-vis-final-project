@@ -225,6 +225,9 @@ d3.csv("./data/gantt_month_data.csv")
             .append('option')
                 .text(function (d) { return d; });
 
+        d3.select('#selector-clear-button')
+            .on('click', () => clearStreamerSelection(data));
+
         makeLegend(encoding_options[0]);
 
         first_month = date_extent[0];
@@ -461,6 +464,21 @@ function selectStreamers(data, data_selection_info, property, value) {
             .attr("opacity", selected ? 1 : .1);
     }
 
+}
+
+function clearStreamerSelection(data) {
+    data_selection_info = {
+        'rank': 'All',
+        'gender': 'All',
+        'nationality': 'All',
+        'age': 'All',
+    };
+    d3.selectAll('.select')
+        .property('value', 'All');
+    d3.select('#encoding-selector')
+        .property('value', 'Average Viewers');
+    selectStreamers(data, data_selection_info, 'rank', 'All');
+    changeEncoding();
 }
 
 function mouseOverGantt(t, selectedData) {
