@@ -138,8 +138,8 @@ a {
 
 #selection-panel {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-  column-gap: 3rem;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  column-gap: 2rem;
   margin: 1rem 0rem;
 }
 
@@ -158,6 +158,10 @@ a {
 
 #gender-buttons {
   width: 100%;
+}
+
+#selector-clear-button {
+    margin-top: 1.5rem;
 }
 
 #gantt-chart-container {
