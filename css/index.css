@@ -101,6 +101,10 @@ a {
   margin: 2rem 0rem;
 }
 
+#streamer-detail {
+    height: 400px;
+}
+
 #streamer-small-chart {
   width: 100%;
 }
