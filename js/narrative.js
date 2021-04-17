@@ -132,7 +132,7 @@ d3.csv("data/gender.csv").then(function (data) {
   updateGenderPieChart(data2);
 });
 
-var width = 450;
+var width = 555;
 var height = 450;
 var pie_margin = 40;
 

@@ -1,165 +1,170 @@
 * {
-    box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 html {
-    font-size: 12px;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-size: 12px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
 }
 
 body {
-    width: 100%;
-    height: 100%;
-    background-color: #333333 !important;
-    color: white !important;
-    font-family: 'Libre Franklin', sans-serif !important;
+  width: 100%;
+  height: 100%;
+  background-color: #333333 !important;
+  color: white !important;
+  font-family: "Libre Franklin", sans-serif !important;
 }
 
-h1{
-    padding-left: 200px;
-    padding-right: 200px;
-    font-size: 50px !important;
-    font-family: 'Merriweather', serif !important;
-    padding-top: 20px;
+h1 {
+  padding-left: 200px;
+  padding-right: 200px;
+  font-size: 50px !important;
+  font-family: "Merriweather", serif !important;
+  padding-top: 20px;
 }
 
-figcaption{
-    color: lightgrey;
-    font-size: 13px;
+figcaption {
+  color: lightgrey;
+  font-size: 13px;
 }
 
-h3{
-    padding-left: 200px;
-    padding-right: 200px;
+h3 {
+  padding-left: 200px;
+  padding-right: 200px;
 }
 
-.top-100{
-    font-size: 40px !important;
-    padding-left: 200px;
-    padding-right: 200px;
+.top-100 {
+  font-size: 40px !important;
+  padding-left: 200px;
+  padding-right: 200px;
 }
 
-p{
-    padding-left: 200px;
-    padding-right: 200px;
+#pie-title > h2 {
+  line-height: 3;
+}
+
+p {
+  padding-left: 200px;
+  padding-right: 200px;
 }
 
 .container {
-    margin-left: auto;
-    margin-right: auto;
-    width: min(100%, 1000px);
-    padding: 0px !important;
+  margin-left: auto;
+  margin-right: auto;
+  width: min(100%, 1000px);
+  padding: 0px !important;
 }
 
 .narrative {
-    font-size: 1.5rem;
+  font-size: 1.5rem;
 }
 
 .streamer-pic {
-    width:100%;
+  width: 100%;
 }
 
 #streamer-icons {
-    display: flex;
-    flex-flow: row wrap;
+  display: flex;
+  flex-flow: row wrap;
 }
 
 .icon {
-    width: 41px;
-    height: 41px;
-    background-color: blueviolet;
-    padding: 2px;
-    margin: 2px;
+  width: 41px;
+  height: 41px;
+  background-color: blueviolet;
+  padding: 2px;
+  margin: 2px;
 }
 
 a {
-    color: blueviolet !important;
+  color: blueviolet !important;
 }
-
 
 .icon-large {
-    width: 94px;
-    height: 94px;
-    background-color: blueviolet;
-    padding: 4px;
+  width: 94px;
+  height: 94px;
+  background-color: blueviolet;
+  padding: 4px;
 }
 
-.icon > img, .icon-large > img {
-    width: 100%;
-    height: 100%;
-    background-color: white;
+.icon > img,
+.icon-large > img {
+  width: 100%;
+  height: 100%;
+  background-color: white;
 }
 
 #streamer-panel {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    margin: 2rem 0rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin: 2rem 0rem;
 }
 
 #streamer-small-chart {
-    width: 100%;
+  width: 100%;
 }
 
 #streamer-header {
-    display: grid;
-    grid-template-columns: 94px 1fr;
+  display: grid;
+  grid-template-columns: 94px 1fr;
 }
 
 .streamer-title {
-    font-size: 4rem;
-    font-weight: bold;
-    line-height: 96px;
-    padding-left: 2rem;
+  font-size: 4rem;
+  font-weight: bold;
+  line-height: 96px;
+  padding-left: 2rem;
 }
 
 .streamer-field {
-    font-size: 2em;
-    line-height: 1.5;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+  font-size: 2em;
+  line-height: 1.5;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
 }
 
 .streamer-field > .label {
-    font-variant: small-caps;
+  font-variant: small-caps;
 }
 
 .streamer-field > .value {
-    font-weight: bold;
+  font-weight: bold;
 }
 
 #selection-panel {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-    column-gap: 3rem;
-    margin: 1rem 0rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  column-gap: 3rem;
+  margin: 1rem 0rem;
 }
 
 .selection-group {
-    border: 2px solid blueviolet;
-    padding: 4px;
+  border: 2px solid blueviolet;
+  padding: 4px;
 }
 
 .selection-item {
-    margin-bottom: 1rem;
+  margin-bottom: 1rem;
 }
 
 .selector-text {
-    margin-right: 1rem;
+  margin-right: 1rem;
 }
 
 #gender-buttons {
-    width: 100%;
+  width: 100%;
 }
 
 #gantt-chart-container {
-    display: flex;
-    width: 100%;
+  display: flex;
+  width: 100%;
 }
 
 #gantt-chart-svg {
-    margin: auto;
+  margin: auto;
 }
 
 #gantt-content {
-    padding-top: 10px;
+  padding-top: 10px;
 }
