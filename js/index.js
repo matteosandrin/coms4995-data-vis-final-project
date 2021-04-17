@@ -667,7 +667,6 @@ function makeLegend(encoding) {
 }
 
 function createSmallChart(data, curr_rank, encoding, total_months, first_month) {
-    d3.select("#small-chart-svg").selectAll('rect').remove();
     d3.select("#small-chart-svg").selectAll('text').remove();
 
     const chart_height = 1000;
@@ -778,18 +777,21 @@ function createSmallChart(data, curr_rank, encoding, total_months, first_month) 
     const bar_padding = 5;
     const bar_width = (screen.width - margin.left - margin.right)/total_months - bar_padding;
 
+    console.log(bar_width);
+
     // chart rects (needs to change)
     d3.select('#small-chart-svg')
-        .append('g')
         .selectAll('rect')
         .data(streamer_data)
         .join('rect')
             .attr("width", bar_width)
-            .attr("height", d => y_scale(extract_field(d)))
-            .attr("y", d => chart_height - chart_margin.bottom - y_scale(extract_field(d)))
             .attr("x", d => x_scale(dateDiff(d.start, first_month)))
             .attr("fill", "white")
-            .attr("opacity", 1);
+            .attr("opacity", 1)
+            .transition()
+                .duration(500)
+                .attr("y", d => chart_height - chart_margin.bottom - y_scale(extract_field(d)))
+                .attr("height", d => y_scale(extract_field(d)));
 
     // chart title (needs to change)
     const title = streamer_data[0].name + "'s " + encoding;
