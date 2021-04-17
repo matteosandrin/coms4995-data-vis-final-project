@@ -134,6 +134,7 @@ d3.csv("./data/gantt_month_data.csv")
         // Selector rects for streamers on hover
         d3.select('#gantt-chart-svg')
             .append('g')
+            .attr("id", "hover_rect_g")
             .selectAll('rect')
             .data([...new Set(data.map(d => d.rank))])
             .join('rect')
@@ -444,7 +445,8 @@ function changeEncoding() {
         .selectAll('rect')
         .attr("fill", d => getColorScheme(d, curr_encoding));
 
-    d3.select("#hover_rect_" + currStreamer.Rank)
+    d3.select("#hover_rect_g")
+        .selectAll('rect')
         .attr("fill", "grey");
 
     createSmallChart(data, currStreamer.Rank, curr_encoding, total_months, first_month);
@@ -519,17 +521,18 @@ function selectStreamers(data, data_selection_info, property, value) {
         d3.selectAll(selected_streamers[streamer].substr(2))
             .transition()
             .delay((d, i) => 10*i + count_selected)
-            .duration(2000)
+            .duration(1000)
             .attr("y", margin.top + (rect_height + height_padding)*count_selected);
 
         d3.select("#hover_rect_" + selected_ranks[streamer])
             .transition()
-            .duration(2000)
+            .duration(1000)
             .attr("y", margin.top + (rect_height + height_padding)*count_selected - height_padding/2);
 
         d3.selectAll("#streamer_text_" + selected_ranks[streamer])
+            .attr("opacity", 1)
             .transition()
-            .duration(2000)
+            .duration(1000)
             .attr("y", margin.top + (rect_height + height_padding)*count_selected + rect_height/2 + 5);
         count_selected++;
     }
@@ -538,17 +541,18 @@ function selectStreamers(data, data_selection_info, property, value) {
         d3.selectAll(non_selected_streamers[streamer].substr(2))
             .transition()
             .delay((d, i) => 10*i)
-            .duration(2000)
+            .duration(1000)
             .attr("y", margin.top + (rect_height + height_padding)*count_selected);
 
         d3.select("#hover_rect_" + non_selected_ranks[streamer])
             .transition()
-            .duration(2000)
+            .duration(1000)
             .attr("y", margin.top + (rect_height + height_padding)*count_selected - height_padding/2);
 
         d3.selectAll("#streamer_text_" + non_selected_ranks[streamer])
+            .attr("opacity", .5)
             .transition()
-            .duration(2000)
+            .duration(1000)
             .attr("y", margin.top + (rect_height + height_padding)*(count_selected) + rect_height/2 + 5);
         count_selected++;
     }
