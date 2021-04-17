@@ -41,11 +41,11 @@ var data_selection_info = {
 };
 
 const data_selection_options = {
-    'gender': ['All', 'Male', 'Female', 'NA'],
-    'age': ['All', 'Less than 18', '18-22', '23-27', '28-32', '33-39', '40 and Up'],
+    'gender': ['All', 'Male', 'Female', 'N/A'],
+    'age': ['All', 'N/A', 'Less than 18', '18-22', '23-27', '28-32', '33-39', '40 and Up'],
 };
 
-const margin = {top: 110, left: 0, right: 20, bottom: 20};
+const margin = {top: 110, left: 0, right: 30, bottom: 20};
 
 var data = [];
 var total_months = 0;
@@ -62,21 +62,32 @@ d3.csv("./data/top_100_streamers_with_categorical.csv")
             .enter()
                 .append('div')
                     .attr('class', 'icon')
-                    .on('mouseover', function () {
+                    .on('mouseover', function (_, selectedData) {
                         d3.select(this)
                             .each(function (d) {setStreamerDetail(d)})
                             .transition()
                                 .duration(50)
                                 .style("opacity", "0.5");
+                        
+                        d3.select("#hover_rect_" + selectedData.Rank)
+                            .attr("opacity", .8);
                     })
-                    .on('mouseout', function () {
+                    .on('mouseout', function (_, selectedData) {
                         d3.select(this)
                             .each(function (d) {setStreamerDetail(currStreamer)})
                             .transition()
                                 .duration(50)
                                 .style("opacity", "1.0");
+
+                        if (selectedData != currStreamer) {
+                            d3.select("#hover_rect_" + selectedData.Rank)
+                                .attr("opacity", 0);
+                        }
                     })
-                    .on('click', function() {
+                    .on('click', function(_, selectedData) {
+                        d3.select("#hover_rect_" + currStreamer.Rank)
+                            .attr("opacity", 0);
+
                         d3.select(this)
                             .each(function (d) {
                                 currStreamer = d;
@@ -84,15 +95,27 @@ d3.csv("./data/top_100_streamers_with_categorical.csv")
                             })
                         
                         createSmallChart(data, currStreamer.Rank, curr_encoding, total_months, first_month);
+                        
+                        d3.select("#hover_rect_" + selectedData.Rank)
+                            .attr("opacity", .8);
                     })
                 .append('img')
                     .attr('src', d => getImageUrl(d));
     }
 );
 
+
+const gantt_height = 2800;
+            
+const width_padding = -.2;
+const height_padding = 14;
+const num_streamers = 100;
+const rect_height = (gantt_height - margin.top - margin.bottom)/(num_streamers+1) - height_padding;
+
 // Gantt Chart
 d3.csv("./data/gantt_month_data.csv")
     .then(function (raw_data) {
+
 
         data = getStreamsData(raw_data);
         gantt_data = data;
@@ -102,21 +125,32 @@ d3.csv("./data/gantt_month_data.csv")
         const text_padding = 240;
         const date_scale = d3.scaleLinear()
             .domain([0, total_months])
-            .range([text_padding, screen.width]);
-
-        const height = 2800;
-            
-        const width_padding = -.2;
-        const height_padding = 14;
-        const num_streamers = 100;
-        const rect_height = (height - margin.top - margin.bottom)/(num_streamers+1) - height_padding;
+            .range([text_padding, screen.width - margin.right]);
         
-        const rect_width = (screen.width - text_padding)/total_months - width_padding;
+        const rect_width = (screen.width - text_padding - margin.right)/total_months - width_padding;
 
         data_selection_options['nationality'] = ['All', ...new Set(data.map(d => d.nationality))];
 
         d3.select('#gantt-chart-svg')
-            .attr("viewBox", [0, 0, screen.width, height]);
+            .attr("viewBox", [0, 0, screen.width, gantt_height]);
+
+        // Selector rects for streamers on hover
+        d3.select('#gantt-chart-svg')
+            .append('g')
+            .selectAll('rect')
+            .data([...new Set(data.map(d => d.rank))])
+            .join('rect')
+                .attr("id", d => "hover_rect_" + d)
+                .attr("width", screen.width)
+                .attr("height", rect_height + height_padding)
+                .attr("y", d => margin.top + (rect_height + height_padding)*d - height_padding/2)
+                .attr("x", margin.left)
+                .attr("fill", "grey")
+                .attr("rx", 5)
+                .attr("opacity", 0);
+
+        d3.select("#hover_rect_" + currStreamer.Rank)
+            .attr("opacity", .8);
 
         // Make the gantt chart rects
         d3.select('#gantt-chart-svg')
@@ -155,7 +189,7 @@ d3.csv("./data/gantt_month_data.csv")
             .data([...new Set(data.map(d => d.name))])
             .join("text")
                 .attr("id", (d, i) => "streamer_text_" + (i+1))
-                .attr("y", (d, i) => margin.top + (rect_height + height_padding)*(i+1) + rect_height/2 + 2.5)
+                .attr("y", (d, i) => margin.top + (rect_height + height_padding)*(i+1) + rect_height/2 + 5)
                 .attr("x", text_padding - 14)
                 .text((d, i) => d + " (" + (i+1) + ")")
                 .attr("text-anchor", "end")
@@ -190,7 +224,7 @@ d3.csv("./data/gantt_month_data.csv")
                 .attr("text-anchor", "start")
                 .attr("stroke-weight", .5)
                 .attr("fill", "white")
-                .attr("font-size", 20);
+                .attr("font-size", 18);
 
         d3.select("#gantt-chart-svg")
             .append("g")
@@ -200,7 +234,7 @@ d3.csv("./data/gantt_month_data.csv")
                 .attr("x1", d => date_scale(dateDiff(d.date, date_extent[0])))
                 .attr("x2", d => date_scale(dateDiff(d.date, date_extent[0])))
                 .attr("y1", margin.top + rect_height + height_padding - 40)
-                .attr("y2", height - margin.bottom)
+                .attr("y2", gantt_height - margin.bottom)
                 .attr("stroke", "white");
 
         var select_nationality = d3.select('#nationality-selector-container')
@@ -364,7 +398,7 @@ function getStreamsData(raw_data) {
         
         const raw_start_date = curr_obj['start_month'].split('-');
         const gender = curr_obj['gender'];
-        const nat = curr_obj['nationality'];
+        const nat = curr_obj['nationality'] == 'Frence' ? 'French' : curr_obj['nationality'];
         const birth_year = curr_obj['birth_year'];
         const age = birth_year != '' ? 2021 - parseInt(birth_year) : -1;
         
@@ -372,8 +406,8 @@ function getStreamsData(raw_data) {
             rank: parseInt(curr_obj['rank']),
             name: curr_obj['streamer'],
             start: new Date('20' + raw_start_date[1], months[raw_start_date[0]]),
-            gender: gender == 'Male' || gender == 'Female' ? gender : 'NA',
-            nationality: nat != '' && nat != 'N/A' ? nat : 'NA',
+            gender: gender == 'Male' || gender == 'Female' ? gender : 'N/A',
+            nationality: nat != '' && nat != 'N/A' ? nat : 'N/A',
             age: age,
             stream_count: parseInt(curr_obj['count']),
             avg_followers_gained: parseFloat(curr_obj['avg_followers_gained']),
@@ -407,6 +441,9 @@ function changeEncoding() {
         .selectAll('rect')
         .attr("fill", d => getColorScheme(d, curr_encoding));
 
+    d3.select("#hover_rect_" + currStreamer.Rank)
+        .attr("fill", "grey");
+
     createSmallChart(data, currStreamer.Rank, curr_encoding, total_months, first_month);
 }
 
@@ -420,6 +457,7 @@ function changeAge(data, data_selection_info) {
     const select_value = d3.select('#age-selector').property('value');
     const value_to_range = {
         'All': 'All',
+        'N/A': [-2, -1],
         'Less than 18': [0, 17],
         '18-22': [18, 22],
         '23-27': [23, 27],
@@ -439,13 +477,17 @@ function getColorScheme(d, value) {
 
 function selectStreamers(data, data_selection_info, property, value) {
     data_selection_info[property] = value;
+    var selected_streamers = {};
+    var non_selected_streamers = {};
+    var selected_ranks = {};
+    var non_selected_ranks = {};
 
     for (const d of data) {
         var selected = true;
         for (const key of Object.keys(data_selection_info)) {
             if (data_selection_info[key] != 'All' && d[key] != data_selection_info[key]) {
                 if (key == 'age') {
-                    if (d[key] < value[0] || d[key] > value[1]) {
+                    if (d[key] < data_selection_info[key][0] || d[key] > data_selection_info[key][1]) {
                         selected = false;
                         break;
                     }
@@ -459,8 +501,54 @@ function selectStreamers(data, data_selection_info, property, value) {
         const curr_id = "#gantt_rect_" + d.rank + "_" + d.start.getFullYear() + "_" + d.start.getMonth();
         d3.select(curr_id)
             .attr("opacity", selected ? 1 : .1);
+
+        if (selected) {
+            selected_streamers[d.name] = selected_streamers[d.name] + ", " + curr_id;
+            selected_ranks[d.name] = d.rank;
+        } else {
+            non_selected_streamers[d.name] = non_selected_streamers[d.name] + ", " + curr_id;
+            non_selected_ranks[d.name] = d.rank;
+        }
     }
 
+    var count_selected = 1;
+    for (streamer in selected_streamers) {
+        d3.selectAll(selected_streamers[streamer].substr(2))
+            .transition()
+            .delay((d, i) => 10*i + count_selected)
+            .duration(2000)
+            .attr("y", margin.top + (rect_height + height_padding)*count_selected);
+
+        d3.select("#hover_rect_" + selected_ranks[streamer])
+            .transition()
+            .duration(2000)
+            .attr("y", margin.top + (rect_height + height_padding)*count_selected - height_padding/2);
+
+        d3.selectAll("#streamer_text_" + selected_ranks[streamer])
+            .transition()
+            .duration(2000)
+            .attr("y", margin.top + (rect_height + height_padding)*count_selected + rect_height/2 + 5);
+        count_selected++;
+    }
+
+    for (streamer in non_selected_streamers) {
+        d3.selectAll(non_selected_streamers[streamer].substr(2))
+            .transition()
+            .delay((d, i) => 10*i)
+            .duration(2000)
+            .attr("y", margin.top + (rect_height + height_padding)*count_selected);
+
+        d3.select("#hover_rect_" + non_selected_ranks[streamer])
+            .transition()
+            .duration(2000)
+            .attr("y", margin.top + (rect_height + height_padding)*count_selected - height_padding/2);
+
+        d3.selectAll("#streamer_text_" + non_selected_ranks[streamer])
+            .transition()
+            .duration(2000)
+            .attr("y", margin.top + (rect_height + height_padding)*(count_selected) + rect_height/2 + 5);
+        count_selected++;
+    }
 }
 
 function mouseOverGantt(t, selectedData) {
@@ -473,25 +561,17 @@ function mouseOverGantt(t, selectedData) {
         .append("g")
         .attr("id", "tooltip");
 
-    tgrp.append("text")
-        .attr("x", 5)
-        .attr("y", 18)
-        .attr("text-anchor", "left")
-        .attr("font-family", "sans-serif")
-        .attr("font-size", "16")
-        .attr("font-weight", "bold")
-        .attr("fill", "white")
-        .text(`${selectedData.name}`);
+    const encoding_val = color_obj[curr_encoding]['field'](selectedData);
 
     tgrp.append("text")
         .attr("x", 5)
-        .attr("y", 34)
+        .attr("y", 26)
         .attr("text-anchor", "left")
         .attr("font-family", "sans-serif")
-        .attr("font-size", "16")
-        .attr("font-style", "italic")
-        .attr("fill", "white")
-        .text(`Rank: ${selectedData.rank}`);
+        .attr("font-size", "20")
+        .attr("font-weight", "bold")
+        .attr("fill", "black")
+        .text(`${numberWithCommas(Math.round(encoding_val))}`);
 
     tgrp.append("text")
         .attr("x", 5)
@@ -499,87 +579,38 @@ function mouseOverGantt(t, selectedData) {
         .attr("text-anchor", "left")
         .attr("font-family", "sans-serif")
         .attr("font-size", "16")
+        .attr("fill", "black")
         .attr("font-style", "italic")
-        .attr("fill", "white")
-        .text(`Month: ${selectedData.start.getMonth()+1 + "/" + selectedData.start.getFullYear()}`);
+        .text(`${selectedData.name} (${selectedData.rank})`);
 
     tgrp.append("text")
         .attr("x", 5)
-        .attr("y", 66)
+        .attr("y", 70)
         .attr("text-anchor", "left")
         .attr("font-family", "sans-serif")
         .attr("font-size", "16")
+        .attr("fill", "black")
         .attr("font-style", "italic")
-        .attr("fill", "white")
-        .text(`${numberWithCommas(selectedData.stream_count)} Stream${selectedData.stream_count == 1 ? '' : 's'}`);
+        .text(`${selectedData.start.getMonth()+1 + "/" + selectedData.start.getFullYear()}`);
 
-    tgrp.append("text")
-        .attr("x", 5)
-        .attr("y", 82)
-        .attr("text-anchor", "left")
-        .attr("font-family", "sans-serif")
-        .attr("font-size", "16")
-        .attr("font-style", "italic")
-        .attr("fill", "white")
-        .text(`Avg Followers Gained: ${numberWithCommas(Math.round(selectedData.avg_followers_gained))}`);
-
-    tgrp.append("text")
-        .attr("x", 5)
-        .attr("y", 98)
-        .attr("text-anchor", "left")
-        .attr("font-family", "sans-serif")
-        .attr("font-size", "16")
-        .attr("font-style", "italic")
-        .attr("fill", "white")
-        .text(`Avg Peak Viewers: ${numberWithCommas(Math.round(selectedData.avg_peak_viewers))}`);
-
-    tgrp.append("text")
-        .attr("x", 5)
-        .attr("y", 114)
-        .attr("text-anchor", "left")
-        .attr("font-family", "sans-serif")
-        .attr("font-size", "16")
-        .attr("font-style", "italic")
-        .attr("fill", "white")
-        .text(`Avg Stream Length: ${numberWithCommas(Math.round(selectedData.avg_stream_length))} minutes`);
-
-    tgrp.append("text")
-        .attr("x", 5)
-        .attr("y", 130)
-        .attr("text-anchor", "left")
-        .attr("font-family", "sans-serif")
-        .attr("font-size", "16")
-        .attr("font-style", "italic")
-        .attr("fill", "white")
-        .text(`Avg Viewers: ${numberWithCommas(Math.round(selectedData.avg_viewers))}`);
-
-    tgrp.append("text")
-        .attr("x", 5)
-        .attr("y", 146)
-        .attr("text-anchor", "left")
-        .attr("font-family", "sans-serif")
-        .attr("font-size", "16")
-        .attr("font-style", "italic")
-        .attr("fill", "white")
-        .text(`Avg Views per Hour: ${numberWithCommas(Math.round(selectedData.avg_views_per_hour))}`);
 
     var text_width = null;
 
     tgrp.append("rect")
         .attr("width", function(d) {
             text_width = this.parentNode.getBBox().width;
-            return this.parentNode.getBBox().width + 10;
+            return this.parentNode.getBBox().width + 15;
         })
-        .attr("height", "160")
-        .attr("fill", "blueviolet")
+        .attr("height", "80")
+        .attr("fill", "white")
         .attr("stroke", "black")
         .attr("stroke-width", 1)
         .lower();
 
     const curr_x = parseFloat(d3.select(t).attr("x"));
-    const x_offset = 30;
+    const x_offset = curr_x < screen.width/2 ? 0 : -text_width;
     var xpos = curr_x + x_offset;
-    var ypos = parseFloat(d3.select(t).attr("y")) - 40;
+    var ypos = parseFloat(d3.select(t).attr("y")) - 90;
     tgrp.attr("transform", `translate(${xpos}, ${ypos})`);
 }
 
