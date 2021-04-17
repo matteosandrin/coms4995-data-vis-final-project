@@ -48,12 +48,12 @@
 
                 <div class="row align-items-center">
                     <div class="col-md-6">
-                        <div id="pie-title " class="d-flex justify-content-center">
+                        <div id="pie-title" class="d-flex justify-content-center">
                             <h2><b>Top 100 Streamers are overwhelmingly male</b></h2>
                         </div>
                         <div class=" d-flex justify-content-center" >
-                            <button onclick="update(data2)" class="btn-secondary"> Top 100 Streamers</button>
-                            <button onclick="update(data1)" class="btn-secondary"> Twitch Viewers </button>
+                            <button onclick="updateGenderPieChart(data2)" class="btn-secondary"> Top 100 Streamers</button>
+                            <button onclick="updateGenderPieChart(data1)" class="btn-secondary"> Twitch Viewers </button>
                         </div>
                         <div class="justify-content-center">
                             <div class="justify-content-center" id="pie-container"></div>
@@ -154,6 +154,7 @@
                         <select class="select form-control" id="encoding-selector"></select>
                     </div>
                 </div>
+                <button id="selector-clear-button" class="btn btn-danger">Clear Filters</button>
             </div>
             <div id="gantt-content">
                 <div id="encoding-selector-container"></div>
