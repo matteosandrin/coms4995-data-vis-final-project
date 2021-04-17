@@ -129,7 +129,7 @@ d3.csv("data/gender.csv").then(function (data) {
   data1 = { female: data[0].Female, male: data[0].Male };
   data2 = { female: data[1].Female, male: data[1].Male };
 
-  update(data2);
+  updateGenderPieChart(data2);
 });
 
 var width = 450;
@@ -156,7 +156,7 @@ var color = d3
   .domain(["female", "male"])
   .range([d3.rgb("#bfabFF"), d3.rgb("#57bee6")]);
 
-function update(data) {
+function updateGenderPieChart(data) {
   var arcGenerator = d3.arc().innerRadius(0).outerRadius(radius);
 
   var pie = d3
@@ -198,13 +198,17 @@ function update(data) {
     .text(function (d) {
       return d.data[0];
     })
+    .style("text-anchor", "middle")
+    .style("font-size", 17);
+
+  svg.selectAll('text')
+    .data(data_ready)
+    .join('text')
     .transition()
     .duration(1000)
     .attr("transform", function (d) {
       return "translate(" + arcGenerator.centroid(d) + ")";
-    })
-    .style("text-anchor", "middle")
-    .style("font-size", 17);
+    });
 
   u.exit().remove();
 }
