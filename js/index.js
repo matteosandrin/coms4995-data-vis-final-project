@@ -54,7 +54,7 @@ var curr_encoding = encoding_options[0];
 
 const gantt_height = 2800;
             
-const width_padding = -.2;
+const width_padding = -.5;
 const height_padding = 14;
 const num_streamers = 100;
 const rect_height = (gantt_height - margin.top - margin.bottom)/(num_streamers+1) - height_padding;
@@ -222,7 +222,7 @@ d3.csv("./data/gantt_month_data.csv")
                 .attr("text-anchor", "start")
                 .attr("stroke-weight", .5)
                 .attr("fill", "white")
-                .attr("font-size", 18);
+                .attr("font-size", 17);
 
         d3.select("#gantt-chart-svg")
             .append("g")
