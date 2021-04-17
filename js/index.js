@@ -52,10 +52,18 @@ var total_months = 0;
 var first_month = 0;
 var curr_encoding = encoding_options[0];
 
-d3.csv("./data/top_100_streamers_with_categorical.csv")
+// Gantt Chart
+d3.csv("./data/gantt_month_data.csv")
+.then(function (raw_data) {
+
+    data = getStreamsData(raw_data);
+    gantt_data = data;
+
+    d3.csv("./data/top_100_streamers_with_categorical.csv")
     .then(function (tile_data) {
         currStreamer = tile_data[0];
         setStreamerDetail(currStreamer);
+        createSmallChart(data, currStreamer.Rank, curr_encoding, total_months, first_month)
         d3.select('#streamer-icons')
             .selectAll('div')
             .data(tile_data)
@@ -87,15 +95,6 @@ d3.csv("./data/top_100_streamers_with_categorical.csv")
                     })
                 .append('img')
                     .attr('src', d => getImageUrl(d));
-    }
-);
-
-// Gantt Chart
-d3.csv("./data/gantt_month_data.csv")
-    .then(function (raw_data) {
-
-        data = getStreamsData(raw_data);
-        gantt_data = data;
         
         const date_extent = d3.extent(data.map(d => d.start));
         total_months = dateDiff(date_extent[0], date_extent[1]);
@@ -232,8 +231,8 @@ d3.csv("./data/gantt_month_data.csv")
 
         first_month = date_extent[0];
         createSmallChart(data, currStreamer.Rank, curr_encoding, total_months, first_month);
-    }
-);
+    });
+});
 
 const color_obj = {
     'Stream Count': {
@@ -393,6 +392,9 @@ function getStreamsData(raw_data) {
 function dateDiff(date_1, date_2) {
     first_date = date_1 < date_2 ? date_1 : date_2;
     second_date = date_1 < date_2 ? date_2 : date_1;
+
+    first_date = new Date(first_date);
+    second_date = new Date(second_date);
 
     var months = (second_date.getFullYear() - first_date.getFullYear())*12;
     months -= first_date.getMonth();
@@ -665,8 +667,6 @@ function makeLegend(encoding) {
 }
 
 function createSmallChart(data, curr_rank, encoding, total_months, first_month) {
-    console.log(encoding)
-    d3.select("#small-chart-svg").selectAll('rect').remove();
     d3.select("#small-chart-svg").selectAll('text').remove();
 
     const chart_height = 1000;
@@ -705,6 +705,7 @@ function createSmallChart(data, curr_rank, encoding, total_months, first_month) 
         Math.round(y_domain[1]),
     ];
 
+    // x axis
     d3.select("#small-chart-svg")
         .append("line")
         .attr("x1", chart_margin.left)
@@ -714,6 +715,7 @@ function createSmallChart(data, curr_rank, encoding, total_months, first_month) 
         .attr("stroke-weight", 5)
         .attr("stroke", "white");
 
+    // y axis
     d3.select("#small-chart-svg")
         .append("line")
         .attr("x1", chart_margin.left)
@@ -723,6 +725,7 @@ function createSmallChart(data, curr_rank, encoding, total_months, first_month) 
         .attr("stroke-weight", 5)
         .attr("stroke", "white");
 
+    // x axis labels
     d3.select("#small-chart-svg")
         .append("g")
         .selectAll("text")
@@ -734,6 +737,7 @@ function createSmallChart(data, curr_rank, encoding, total_months, first_month) 
             .attr("font-size", 25)
             .text(d => d.label);
 
+    // y axis labels (needs to change)
     d3.select("#small-chart-svg")
         .append("g")
         .selectAll("text")
@@ -746,6 +750,7 @@ function createSmallChart(data, curr_rank, encoding, total_months, first_month) 
             .attr("text-anchor", "end")
             .text(d => numberWithCommas(d));
 
+    // x axis ticks
     d3.select("#small-chart-svg")
         .append("g")
         .selectAll("line")
@@ -757,6 +762,7 @@ function createSmallChart(data, curr_rank, encoding, total_months, first_month) 
             .attr("y2", chart_height - chart_margin.bottom)
             .attr("stroke", "white");
 
+    // y axis ticks
     d3.select("#small-chart-svg")
         .append("g")
         .selectAll("line")
@@ -771,24 +777,29 @@ function createSmallChart(data, curr_rank, encoding, total_months, first_month) 
     const bar_padding = 5;
     const bar_width = (screen.width - margin.left - margin.right)/total_months - bar_padding;
 
+    console.log(bar_width);
+
+    // chart rects (needs to change)
     d3.select('#small-chart-svg')
-        .append('g')
         .selectAll('rect')
         .data(streamer_data)
         .join('rect')
             .attr("width", bar_width)
-            .attr("height", d => y_scale(extract_field(d)))
-            .attr("y", d => chart_height - chart_margin.bottom - y_scale(extract_field(d)))
             .attr("x", d => x_scale(dateDiff(d.start, first_month)))
             .attr("fill", "white")
-            .attr("opacity", 1);
+            .attr("opacity", 1)
+            .transition()
+                .duration(500)
+                .attr("y", d => chart_height - chart_margin.bottom - y_scale(extract_field(d)))
+                .attr("height", d => y_scale(extract_field(d)));
 
-
+    // chart title (needs to change)
+    const title = streamer_data[0].name + "'s " + encoding;
     d3.select("#small-chart-svg")
         .append("text")
         .attr("x", screen.width/2)
         .attr("y", chart_margin.top/2.5)
-        .text(streamer_data[0].name + "'s " + encoding)
+        .text(title)
         .attr("fill", "white")
         .attr("font-size", 40)
         .attr("text-anchor", "middle");
