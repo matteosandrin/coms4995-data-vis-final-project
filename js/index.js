@@ -899,14 +899,14 @@ function mouseOverSmallChart(t, selectedData, extract_field, y_scale) {
             text_width = this.parentNode.getBBox().width;
             return this.parentNode.getBBox().width + 10;
         })
-        .attr("height", "100")
+        .attr("height", "90")
         .attr("fill", "blueviolet")
         .attr("stroke", "black")
         .attr("stroke-width", 1)
         .lower();
 
     const curr_x = parseFloat(d3.select(t).attr("x"));
-    const x_offset = curr_x < screen.width/2 ? 20 : -text_width-20;
+    const x_offset = curr_x < screen.width/2 ? 30 : -text_width-20;
     var xpos = curr_x + x_offset;
 
     const curr_y = small_chart_height - y_scale(extract_field(selectedData));
