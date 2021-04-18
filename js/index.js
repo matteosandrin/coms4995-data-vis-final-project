@@ -61,6 +61,9 @@ const rect_height = (gantt_height - margin.top - margin.bottom)/(num_streamers+1
 
 const small_chart_height = 1000;
 
+// Use so axes are not repeatedly drawn
+var small_chart_created = false;
+
 // Gantt Chart
 d3.csv("./data/gantt_month_data.csv")
 .then(function (raw_data) {
@@ -72,7 +75,6 @@ d3.csv("./data/gantt_month_data.csv")
     .then(function (tile_data) {
         currStreamer = tile_data[0];
         setStreamerDetail(currStreamer);
-        createSmallChart(data, currStreamer.Rank, curr_encoding, total_months, first_month)
         d3.select('#streamer-icons')
             .selectAll('div')
             .data(tile_data)
@@ -704,7 +706,7 @@ function makeLegend(encoding) {
 function createSmallChart(data, curr_rank, encoding, total_months, first_month) {
     d3.select("#small-chart-svg").selectAll('text').remove();
 
-    const chart_margin = {left: 150, right: 40, top: 100, bottom: 175};
+    const chart_margin = {left: 150, right: 40, top: 100, bottom: 160};
     d3.select("#small-chart-svg")
         .attr("viewBox", [0, 0, screen.width, small_chart_height]);
 
@@ -722,7 +724,6 @@ function createSmallChart(data, curr_rank, encoding, total_months, first_month) 
 
     const x_axis_ticks = [
         {date: new Date(2015, 6), label: '7/2015'},
-        {date: new Date(2016, 0), label: '1/2016'},
         {date: new Date(2017, 0), label: '1/2017'},
         {date: new Date(2018, 0), label: '1/2018'},
         {date: new Date(2019, 0), label: '1/2019'},
@@ -739,38 +740,63 @@ function createSmallChart(data, curr_rank, encoding, total_months, first_month) 
         Math.round(y_domain[1]),
     ];
 
-    // x axis
-    d3.select("#small-chart-svg")
-        .append("line")
-        .attr("x1", chart_margin.left)
-        .attr("x2", screen.width - chart_margin.right)
-        .attr("y1", small_chart_height - chart_margin.bottom)
-        .attr("y2", small_chart_height - chart_margin.bottom)
-        .attr("stroke-weight", 5)
-        .attr("stroke", "white");
+    if (!small_chart_created) {
+        console.log("hi")
+        // x axis
+        d3.select("#small-chart-svg")
+            .append("line")
+            .attr("x1", chart_margin.left)
+            .attr("x2", screen.width - chart_margin.right)
+            .attr("y1", small_chart_height - chart_margin.bottom)
+            .attr("y2", small_chart_height - chart_margin.bottom)
+            .attr("stroke-weight", 5)
+            .attr("stroke", "white");
 
-    // y axis
-    d3.select("#small-chart-svg")
-        .append("line")
-        .attr("x1", chart_margin.left)
-        .attr("x2", chart_margin.left)
-        .attr("y1", 100)
-        .attr("y2", small_chart_height - chart_margin.bottom)
-        .attr("stroke-weight", 5)
-        .attr("stroke", "white");
+        // y axis
+        d3.select("#small-chart-svg")
+            .append("line")
+            .attr("x1", chart_margin.left)
+            .attr("x2", chart_margin.left)
+            .attr("y1", 100)
+            .attr("y2", small_chart_height - chart_margin.bottom)
+            .attr("stroke-weight", 5)
+            .attr("stroke", "white");
 
-    // x axis labels
-    d3.select("#small-chart-svg")
-        .append("g")
-        .selectAll("text")
-        .data(x_axis_ticks)
-        .join("text")
-            //.attr("x", d => x_scale(dateDiff(d.date, first_month)) + 10)
-            //.attr("y", chart_height - chart_margin.bottom + 30)
-            .attr("fill", "white")
-            .attr("font-size", 40)
-            .attr("transform", d=>`translate(${x_scale(dateDiff(d.date, first_month))}, ${small_chart_height -50}), rotate(-45)`)
-            .text(d => d.label);
+        // x axis labels
+        d3.select("#small-chart-svg")
+            .append("g")
+            .selectAll("text")
+            .data(x_axis_ticks)
+            .join("text")
+                .attr("fill", "white")
+                .attr("font-size", 34)
+                .attr("transform", d=>`translate(${x_scale(dateDiff(d.date, first_month)) - 70}, ${small_chart_height - 20}), rotate(-45)`)
+                .text(d => d.label);
+
+        // x axis ticks
+        d3.select("#small-chart-svg")
+            .append("g")
+            .selectAll("line")
+            .data(x_axis_ticks)
+            .join("line")
+                .attr("x1", d => x_scale(dateDiff(d.date, first_month)))
+                .attr("x2", d => x_scale(dateDiff(d.date, first_month)))
+                .attr("y1", small_chart_height - chart_margin.bottom + 30)
+                .attr("y2", small_chart_height - chart_margin.bottom)
+                .attr("stroke", "white");
+
+        // y axis ticks
+        d3.select("#small-chart-svg")
+            .append("g")
+            .selectAll("line")
+            .data(y_axis_ticks)
+            .join("line")
+                .attr("x1", chart_margin.left - 10)
+                .attr("x2", chart_margin.left)
+                .attr("y1", d => small_chart_height - chart_margin.bottom - y_scale(d))
+                .attr("y2", d => small_chart_height - chart_margin.bottom - y_scale(d))
+                .attr("stroke", "white");
+    }
 
     // y axis labels (needs to change)
     d3.select("#small-chart-svg")
@@ -781,33 +807,9 @@ function createSmallChart(data, curr_rank, encoding, total_months, first_month) 
             .attr("x", chart_margin.left - 30)
             .attr("y", d => small_chart_height - chart_margin.bottom - y_scale(d))
             .attr("fill", "white")
-            .attr("font-size", 25)
+            .attr("font-size", 28)
             .attr("text-anchor", "end")
             .text(d => numberWithCommas(d));
-
-    // x axis ticks
-    d3.select("#small-chart-svg")
-        .append("g")
-        .selectAll("line")
-        .data(x_axis_ticks)
-        .join("line")
-            .attr("x1", d => x_scale(dateDiff(d.date, first_month)))
-            .attr("x2", d => x_scale(dateDiff(d.date, first_month)))
-            .attr("y1", small_chart_height - chart_margin.bottom + 30)
-            .attr("y2", small_chart_height - chart_margin.bottom)
-            .attr("stroke", "white");
-
-    // y axis ticks
-    d3.select("#small-chart-svg")
-        .append("g")
-        .selectAll("line")
-        .data(y_axis_ticks)
-        .join("line")
-            .attr("x1", chart_margin.left - 10)
-            .attr("x2", chart_margin.left)
-            .attr("y1", d => small_chart_height - chart_margin.bottom - y_scale(d))
-            .attr("y2", d => small_chart_height - chart_margin.bottom - y_scale(d))
-            .attr("stroke", "white");
 
     const bar_padding = 5;
     const bar_width = (screen.width - margin.left - margin.right)/total_months - bar_padding;
@@ -855,6 +857,8 @@ function createSmallChart(data, curr_rank, encoding, total_months, first_month) 
         .attr("fill", "white")
         .attr("font-size", 40)
         .attr("text-anchor", "middle");
+
+    small_chart_created = true;
 }
 
 function mouseOverSmallChart(t, selectedData, extract_field, y_scale) {
@@ -906,7 +910,7 @@ function mouseOverSmallChart(t, selectedData, extract_field, y_scale) {
     var xpos = curr_x + x_offset;
 
     const curr_y = small_chart_height - y_scale(extract_field(selectedData));
-    var ypos = Math.min(Math.max(curr_y, 150), 650);
+    var ypos = Math.min(Math.max(curr_y, 150), 680);
     tgrp.attr("transform", `translate(${xpos}, ${ypos})`);
 }
 
