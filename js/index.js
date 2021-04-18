@@ -713,6 +713,9 @@ function createSmallChart(data, curr_rank, encoding, total_months, first_month) 
     const streamer_data = data.filter(d => d.rank == curr_rank);
     const extract_field = color_obj[encoding]['field'];
     const y_domain = [0, d3.extent(streamer_data.map(d => extract_field(d)))[1]];
+    
+    const bar_padding = 5;
+    const bar_width = (screen.width - margin.left - margin.right)/total_months - bar_padding;
 
     const y_scale  = d3.scaleLinear()
         .domain(y_domain)
@@ -720,7 +723,7 @@ function createSmallChart(data, curr_rank, encoding, total_months, first_month) 
 
     const x_scale = d3.scaleLinear()
         .domain([0, total_months])
-        .range([chart_margin.left, screen.width - chart_margin.right]);
+        .range([chart_margin.left, screen.width - chart_margin.right - bar_width]);
 
     const x_axis_ticks = [
         {date: new Date(2015, 6), label: '7/2015'},
@@ -739,23 +742,23 @@ function createSmallChart(data, curr_rank, encoding, total_months, first_month) 
         Math.round(4*(y_domain[1] - y_domain[0])/5),
         Math.round(y_domain[1]),
     ];
-
+    const axis_pad = 20;
     if (!small_chart_created) {
         // x axis
         d3.select("#small-chart-svg")
             .append("line")
             .attr("x1", chart_margin.left)
             .attr("x2", screen.width - chart_margin.right)
-            .attr("y1", small_chart_height - chart_margin.bottom)
-            .attr("y2", small_chart_height - chart_margin.bottom)
+            .attr("y1", small_chart_height - chart_margin.bottom + axis_pad)
+            .attr("y2", small_chart_height - chart_margin.bottom + axis_pad)
             .attr("stroke-weight", 5)
             .attr("stroke", "white");
 
         // y axis
         d3.select("#small-chart-svg")
             .append("line")
-            .attr("x1", chart_margin.left)
-            .attr("x2", chart_margin.left)
+            .attr("x1", chart_margin.left - axis_pad)
+            .attr("x2", chart_margin.left - axis_pad)
             .attr("y1", 100)
             .attr("y2", small_chart_height - chart_margin.bottom)
             .attr("stroke-weight", 5)
@@ -769,8 +772,8 @@ function createSmallChart(data, curr_rank, encoding, total_months, first_month) 
             .join("line")
                 .attr("x1", d => x_scale(dateDiff(d.date, first_month)))
                 .attr("x2", d => x_scale(dateDiff(d.date, first_month)))
-                .attr("y1", small_chart_height - chart_margin.bottom + 30)
-                .attr("y2", small_chart_height - chart_margin.bottom)
+                .attr("y1", small_chart_height - chart_margin.bottom + 30 + axis_pad)
+                .attr("y2", small_chart_height - chart_margin.bottom + axis_pad)
                 .attr("stroke", "white");
 
         // y axis ticks
@@ -779,13 +782,12 @@ function createSmallChart(data, curr_rank, encoding, total_months, first_month) 
             .selectAll("line")
             .data(y_axis_ticks)
             .join("line")
-                .attr("x1", chart_margin.left - 10)
-                .attr("x2", chart_margin.left)
+                .attr("x1", chart_margin.left - 10 - axis_pad)
+                .attr("x2", chart_margin.left - axis_pad)
                 .attr("y1", d => small_chart_height - chart_margin.bottom - y_scale(d))
                 .attr("y2", d => small_chart_height - chart_margin.bottom - y_scale(d))
                 .attr("stroke", "white");
     }
-
 
     // x axis labels
     d3.select("#small-chart-svg")
@@ -795,7 +797,7 @@ function createSmallChart(data, curr_rank, encoding, total_months, first_month) 
         .join("text")
             .attr("fill", "white")
             .attr("font-size", 34)
-            .attr("transform", d=>`translate(${x_scale(dateDiff(d.date, first_month)) - 70}, ${small_chart_height - 20}), rotate(-45)`)
+            .attr("transform", d=>`translate(${x_scale(dateDiff(d.date, first_month)) - 70}, ${small_chart_height - 20 + axis_pad}), rotate(-45)`)
             .text(d => d.label);
 
     // y axis labels (needs to change)
@@ -804,15 +806,12 @@ function createSmallChart(data, curr_rank, encoding, total_months, first_month) 
         .selectAll("text")
         .data(y_axis_ticks)
         .join("text")
-            .attr("x", chart_margin.left - 30)
+            .attr("x", chart_margin.left - 30 - axis_pad)
             .attr("y", d => small_chart_height - chart_margin.bottom - y_scale(d))
             .attr("fill", "white")
             .attr("font-size", 28)
             .attr("text-anchor", "end")
             .text(d => numberWithCommas(d));
-
-    const bar_padding = 5;
-    const bar_width = (screen.width - margin.left - margin.right)/total_months - bar_padding;
 
     // chart rects (needs to change)
    d3.select('#small-chart-svg')
