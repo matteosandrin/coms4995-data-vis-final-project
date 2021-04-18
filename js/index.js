@@ -135,6 +135,32 @@ d3.csv("./data/gantt_month_data.csv")
         d3.select('#gantt-chart-svg')
             .attr("viewBox", [0, 0, screen.width, gantt_height]);
 
+        // Add text and rect for no streamers in filter
+        const no_streamers_rect_width = 450;
+        const no_streamers_rect_height = 50;
+        d3.select("#gantt-chart-svg")
+            .append("rect")
+            .attr("id", "no-streamers-rect")
+            .attr("y", margin.top + 68 - no_streamers_rect_height/2)
+            .attr("x", screen.width/2 - no_streamers_rect_width/2)
+            .attr("fill", "red")
+            .attr("opacity", 0)
+            .attr("rx", 10)
+            .attr("height", no_streamers_rect_height)
+            .attr("width", no_streamers_rect_width);
+
+        d3.select("#gantt-chart-svg")
+            .append("text")
+            .attr("id", "no-streamers-text")
+            .attr("y", margin.top + 80)
+            .attr("x", screen.width/2)
+            .text("No Streamers Match this Filter")
+            .attr("text-anchor", "middle")
+            .attr("stroke-weight", .5)
+            .attr("fill", "white")
+            .attr("opacity", 0)
+            .attr("font-size", 30);
+
         // Selector rects for streamers on hover
         d3.select('#gantt-chart-svg')
             .append('g')
@@ -174,36 +200,6 @@ d3.csv("./data/gantt_month_data.csv")
                     mouseOutGantt(this, selectedData);
                 });
 
-        // Make text for rankings of streamers
-        d3.select("#gantt-chart-svg")
-            .append("text")
-            .attr("x", text_padding - 14)
-            .attr("y", margin.top)
-            .attr("text-anchor", "end")
-            .attr("font-weight", "bold")
-            .attr("fill", "white")
-            .attr("font-size", 20)
-            .text("Streamer (rank)");
-
-        d3.select("#gantt-chart-svg")
-            .append("g")
-            .selectAll("text")
-            .data([...new Set(data.map(d => d.name))])
-            .join("text")
-                .attr("id", (d, i) => "streamer_text_" + (i+1))
-                .attr("y", (d, i) => margin.top + (rect_height + height_padding)*(i+1) + rect_height/2 + 5)
-                .attr("x", text_padding - 14)
-                .text((d, i) => d + " (" + (i+1) + ")")
-                .attr("text-anchor", "end")
-                .attr("fill", "white")
-                .attr("font-size", 20)
-                .on("mouseover", function(event, selectedData) {
-                    mouseOverText(this, selectedData);
-                })
-                .on("mouseout", function(event, selectedData) {
-                    mouseOutText(this, selectedData);
-                });
-
         // Text for years/months
         const date_labels = [
             {date: new Date(2015, 6), label: 'July 2015'},
@@ -239,6 +235,36 @@ d3.csv("./data/gantt_month_data.csv")
                 .attr("y2", gantt_height - margin.bottom)
                 .attr("stroke", "white");
 
+        // Make text for rankings of streamers
+        d3.select("#gantt-chart-svg")
+            .append("text")
+            .attr("x", text_padding - 14)
+            .attr("y", margin.top)
+            .attr("text-anchor", "end")
+            .attr("font-weight", "bold")
+            .attr("fill", "white")
+            .attr("font-size", 20)
+            .text("Streamer (rank)");
+
+        d3.select("#gantt-chart-svg")
+            .append("g")
+            .selectAll("text")
+            .data([...new Set(data.map(d => d.name))])
+            .join("text")
+                .attr("id", (d, i) => "streamer_text_" + (i+1))
+                .attr("y", (d, i) => margin.top + (rect_height + height_padding)*(i+1) + rect_height/2 + 5)
+                .attr("x", text_padding - 14)
+                .text((d, i) => d + " (" + (i+1) + ")")
+                .attr("text-anchor", "end")
+                .attr("fill", "white")
+                .attr("font-size", 20)
+                .on("mouseover", function(event, selectedData) {
+                    mouseOverText(this, selectedData);
+                })
+                .on("mouseout", function(event, selectedData) {
+                    mouseOutText(this, selectedData);
+                });
+
         var select_nationality = d3.select('#nationality-selector-container')
             .select('select')
                 .on('change', function() { changeNationality(data, data_selection_info) });
@@ -268,6 +294,7 @@ d3.csv("./data/gantt_month_data.csv")
 
         first_month = date_extent[0];
         createSmallChart(data, currStreamer.Rank, curr_encoding, total_months, first_month);
+
     });
 });
 
@@ -524,7 +551,7 @@ function selectStreamers(data, data_selection_info, property, value) {
     for (streamer in selected_streamers) {
         d3.selectAll(selected_streamers[streamer].substr(2))
             .transition()
-            .delay((d, i) => 10*i + count_selected)
+            .delay((d, i) => 10*i + count_selected*10)
             .duration(1000)
             .attr("y", margin.top + (rect_height + height_padding)*count_selected);
 
@@ -534,47 +561,69 @@ function selectStreamers(data, data_selection_info, property, value) {
             .attr("y", margin.top + (rect_height + height_padding)*count_selected - height_padding/2);
 
         d3.selectAll("#streamer_text_" + selected_ranks[streamer])
-            .attr("opacity", 1)
             .transition()
             .duration(1000)
             .attr("y", margin.top + (rect_height + height_padding)*count_selected + rect_height/2 + 5);
         count_selected++;
     }
 
+    if (count_selected == 1) {
+        d3.select("#gantt-chart-svg")
+            .select("#no-streamers-rect")
+            .transition()
+            .attr("opacity", function() {
+                this.parentElement.appendChild(this);
+                return .8;
+            });
+
+        d3.select("#gantt-chart-svg")
+            .select("#no-streamers-text")
+            .transition()
+            .attr("opacity", function() {
+                this.parentElement.appendChild(this);
+                return 1;
+            });
+    } else {
+        d3.select("#gantt-chart-svg")
+            .selectAll("#no-streamers-text, #no-streamers-rect")
+            .attr("opacity", function() {
+                this.parentNode.insertBefore(this, this.parentNode.firstChild);
+                return 0;
+            });
+    }
+
     for (streamer in non_selected_streamers) {
         d3.selectAll(non_selected_streamers[streamer].substr(2))
-            .transition()
-            .delay((d, i) => 10*i)
-            .duration(1000)
-            .attr("y", margin.top + (rect_height + height_padding)*count_selected);
+            .attr("y", gantt_height + margin.bottom);
 
         d3.select("#hover_rect_" + non_selected_ranks[streamer])
-            .transition()
-            .duration(1000)
-            .attr("y", margin.top + (rect_height + height_padding)*count_selected - height_padding/2);
+            .attr("y", gantt_height + margin.bottom);
 
         d3.selectAll("#streamer_text_" + non_selected_ranks[streamer])
-            .attr("opacity", .5)
-            .transition()
-            .duration(1000)
-            .attr("y", margin.top + (rect_height + height_padding)*(count_selected) + rect_height/2 + 5);
-        count_selected++;
+            .attr("y", gantt_height + margin.bottom);
     }
 }
 
 function clearStreamerSelection(data) {
-    data_selection_info = {
-        'rank': 'All',
-        'gender': 'All',
-        'nationality': 'All',
-        'age': 'All',
-    };
-    d3.selectAll('.select')
-        .property('value', 'All');
-    d3.select('#encoding-selector')
-        .property('value', 'Average Viewers');
-    selectStreamers(data, data_selection_info, 'rank', 'All');
-    changeEncoding();
+    if (
+        data_selection_info['rank'] != 'All' ||
+        data_selection_info['gender'] != 'All' ||
+        data_selection_info['nationality'] != 'All' ||
+        data_selection_info['age'] != 'All'
+    ) {
+        data_selection_info = {
+            'rank': 'All',
+            'gender': 'All',
+            'nationality': 'All',
+            'age': 'All',
+        };
+        d3.selectAll('.select')
+            .property('value', 'All');
+        d3.select('#encoding-selector')
+            .property('value', 'Average Viewers');
+        selectStreamers(data, data_selection_info, 'rank', 'All');
+        changeEncoding();
+    }
 }
 
 function mouseOverGantt(t, selectedData) {
