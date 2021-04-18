@@ -183,6 +183,7 @@ d3.csv("./data/gantt_month_data.csv")
         // Make the gantt chart rects
         d3.select('#gantt-chart-svg')
             .append('g')
+            .attr("id", "gantt-chart-rects")
             .selectAll('rect')
             .data(data)
             .join('rect')
@@ -294,7 +295,6 @@ d3.csv("./data/gantt_month_data.csv")
 
         first_month = date_extent[0];
         createSmallChart(data, currStreamer.Rank, curr_encoding, total_months, first_month);
-
     });
 });
 
@@ -473,12 +473,9 @@ function changeEncoding() {
     makeLegend(curr_encoding);
 
     d3.select('#gantt-chart-svg')
+        .select("#gantt-chart-rects")
         .selectAll('rect')
         .attr("fill", d => getColorScheme(d, curr_encoding));
-
-    d3.select("#hover_rect_g")
-        .selectAll('rect')
-        .attr("fill", "grey");
 
     createSmallChart(data, currStreamer.Rank, curr_encoding, total_months, first_month);
 }
