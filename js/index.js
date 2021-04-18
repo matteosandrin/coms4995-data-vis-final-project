@@ -59,6 +59,8 @@ const height_padding = 14;
 const num_streamers = 100;
 const rect_height = (gantt_height - margin.top - margin.bottom)/(num_streamers+1) - height_padding;
 
+const small_chart_height = 1000;
+
 // Gantt Chart
 d3.csv("./data/gantt_month_data.csv")
 .then(function (raw_data) {
@@ -702,10 +704,9 @@ function makeLegend(encoding) {
 function createSmallChart(data, curr_rank, encoding, total_months, first_month) {
     d3.select("#small-chart-svg").selectAll('text').remove();
 
-    const chart_height = 1000;
-    const chart_margin = {left: 150, right: 40, top: 200, bottom: 175};
+    const chart_margin = {left: 150, right: 40, top: 100, bottom: 175};
     d3.select("#small-chart-svg")
-        .attr("viewBox", [0, 0, screen.width, chart_height]);
+        .attr("viewBox", [0, 0, screen.width, small_chart_height]);
 
     const streamer_data = data.filter(d => d.rank == curr_rank);
     const extract_field = color_obj[encoding]['field'];
@@ -713,7 +714,7 @@ function createSmallChart(data, curr_rank, encoding, total_months, first_month) 
 
     const y_scale  = d3.scaleLinear()
         .domain(y_domain)
-        .range([0, chart_height - chart_margin.top]);
+        .range([0, small_chart_height - chart_margin.top - chart_margin.bottom]);
 
     const x_scale = d3.scaleLinear()
         .domain([0, total_months])
@@ -743,8 +744,8 @@ function createSmallChart(data, curr_rank, encoding, total_months, first_month) 
         .append("line")
         .attr("x1", chart_margin.left)
         .attr("x2", screen.width - chart_margin.right)
-        .attr("y1", chart_height - chart_margin.bottom)
-        .attr("y2", chart_height - chart_margin.bottom)
+        .attr("y1", small_chart_height - chart_margin.bottom)
+        .attr("y2", small_chart_height - chart_margin.bottom)
         .attr("stroke-weight", 5)
         .attr("stroke", "white");
 
@@ -754,7 +755,7 @@ function createSmallChart(data, curr_rank, encoding, total_months, first_month) 
         .attr("x1", chart_margin.left)
         .attr("x2", chart_margin.left)
         .attr("y1", 100)
-        .attr("y2", chart_height - chart_margin.bottom)
+        .attr("y2", small_chart_height - chart_margin.bottom)
         .attr("stroke-weight", 5)
         .attr("stroke", "white");
 
@@ -768,7 +769,7 @@ function createSmallChart(data, curr_rank, encoding, total_months, first_month) 
             //.attr("y", chart_height - chart_margin.bottom + 30)
             .attr("fill", "white")
             .attr("font-size", 40)
-            .attr("transform", d=>`translate(${x_scale(dateDiff(d.date, first_month))}, ${chart_height -50}), rotate(-45)`)
+            .attr("transform", d=>`translate(${x_scale(dateDiff(d.date, first_month))}, ${small_chart_height -50}), rotate(-45)`)
             .text(d => d.label);
 
     // y axis labels (needs to change)
@@ -778,7 +779,7 @@ function createSmallChart(data, curr_rank, encoding, total_months, first_month) 
         .data(y_axis_ticks)
         .join("text")
             .attr("x", chart_margin.left - 30)
-            .attr("y", d => chart_height - chart_margin.bottom - y_scale(d))
+            .attr("y", d => small_chart_height - chart_margin.bottom - y_scale(d))
             .attr("fill", "white")
             .attr("font-size", 25)
             .attr("text-anchor", "end")
@@ -792,8 +793,8 @@ function createSmallChart(data, curr_rank, encoding, total_months, first_month) 
         .join("line")
             .attr("x1", d => x_scale(dateDiff(d.date, first_month)))
             .attr("x2", d => x_scale(dateDiff(d.date, first_month)))
-            .attr("y1", chart_height - chart_margin.bottom + 30)
-            .attr("y2", chart_height - chart_margin.bottom)
+            .attr("y1", small_chart_height - chart_margin.bottom + 30)
+            .attr("y2", small_chart_height - chart_margin.bottom)
             .attr("stroke", "white");
 
     // y axis ticks
@@ -804,35 +805,46 @@ function createSmallChart(data, curr_rank, encoding, total_months, first_month) 
         .join("line")
             .attr("x1", chart_margin.left - 10)
             .attr("x2", chart_margin.left)
-            .attr("y1", d => chart_height - chart_margin.bottom - y_scale(d))
-            .attr("y2", d => chart_height - chart_margin.bottom - y_scale(d))
+            .attr("y1", d => small_chart_height - chart_margin.bottom - y_scale(d))
+            .attr("y2", d => small_chart_height - chart_margin.bottom - y_scale(d))
             .attr("stroke", "white");
 
     const bar_padding = 5;
     const bar_width = (screen.width - margin.left - margin.right)/total_months - bar_padding;
 
-    console.log(bar_width);
-
     // chart rects (needs to change)
-    d3.select('#small-chart-svg')
+   d3.select('#small-chart-svg')
         .selectAll('rect')
         .data(streamer_data)
         .join('rect')
+            .attr("id", d => "small_bar_" + d.start.getFullYear() + "_" + d.start.getMonth())
             .attr("width", bar_width)
             .attr("x", d => x_scale(dateDiff(d.start, first_month)))
             .attr("fill", "white")
             .attr("opacity", 1)
             .transition()
                 .duration(500)
-                .attr("y", d => chart_height - chart_margin.bottom - y_scale(extract_field(d)))
-                .attr("height", d => y_scale(extract_field(d)))
-                .on("mouseover", function(_, selectedData) {
-                    mouseOverSmallChart(this, selectedData);
-                })
-                .on("mouseout", function(_, selectedData) {
-                    mouseOutSmallChart(this, selectedData);
-                });
+                .attr("y", d => small_chart_height - chart_margin.bottom - y_scale(extract_field(d)))
+                .attr("height", d => y_scale(extract_field(d)));
 
+    // Rects for hovering on bar chart
+    d3.select('#small-chart-svg')
+        .append("g")
+        .selectAll('rect')
+        .data(streamer_data)
+        .join('rect')
+            .attr("opacity", 0)
+            .attr("width", bar_width)
+            .attr("x", d => x_scale(dateDiff(d.start, first_month)))
+            .on("mouseover", function(_, selectedData) {
+                mouseOverSmallChart(this, selectedData, extract_field, y_scale);
+            })
+            .on("mouseout", function(_, selectedData) {
+                mouseOutSmallChart(this, selectedData);
+            })
+            .attr("y", chart_margin.top)
+            .attr("height", small_chart_height - chart_margin.top - chart_margin.bottom);
+                
     // chart title (needs to change)
     const title = streamer_data[0].name + "'s " + encoding;
     d3.select("#small-chart-svg")
@@ -845,100 +857,36 @@ function createSmallChart(data, curr_rank, encoding, total_months, first_month) 
         .attr("text-anchor", "middle");
 }
 
-function mouseOverSmallChart(t, selectedData) {
+function mouseOverSmallChart(t, selectedData, extract_field, y_scale) {
+    const bar_id = "#small_bar_" + selectedData.start.getFullYear() + "_" + selectedData.start.getMonth();
+    d3.select("#small-chart-svg")
+        .select(bar_id)
+        .attr("fill", "blueviolet");
+
     var tgrp = d3.select("#small-chart-svg")
         .append("g")
         .attr("id", "tooltip");
 
     tgrp.append("text")
         .attr("x", 5)
-        .attr("y", 18)
+        .attr("y", 36)
         .attr("text-anchor", "left")
         .attr("font-family", "sans-serif")
-        .attr("font-size", "16")
+        .attr("font-size", "36")
         .attr("font-weight", "bold")
         .attr("fill", "white")
-        .text(`${selectedData.name}`);
+        .text(`${numberWithCommas(Math.round(extract_field(selectedData)))}`);
 
     tgrp.append("text")
         .attr("x", 5)
-        .attr("y", 34)
+        .attr("y", 70)
         .attr("text-anchor", "left")
         .attr("font-family", "sans-serif")
-        .attr("font-size", "16")
+        .attr("font-size", "32")
         .attr("font-style", "italic")
+        .attr("font-weight", "bold")
         .attr("fill", "white")
-        .text(`Rank: ${selectedData.rank}`);
-
-    tgrp.append("text")
-        .attr("x", 5)
-        .attr("y", 50)
-        .attr("text-anchor", "left")
-        .attr("font-family", "sans-serif")
-        .attr("font-size", "16")
-        .attr("font-style", "italic")
-        .attr("fill", "white")
-        .text(`Month: ${selectedData.start.getMonth()+1 + "/" + selectedData.start.getFullYear()}`);
-
-    tgrp.append("text")
-        .attr("x", 5)
-        .attr("y", 66)
-        .attr("text-anchor", "left")
-        .attr("font-family", "sans-serif")
-        .attr("font-size", "16")
-        .attr("font-style", "italic")
-        .attr("fill", "white")
-        .text(`${numberWithCommas(selectedData.stream_count)} Stream${selectedData.stream_count == 1 ? '' : 's'}`);
-
-    tgrp.append("text")
-        .attr("x", 5)
-        .attr("y", 82)
-        .attr("text-anchor", "left")
-        .attr("font-family", "sans-serif")
-        .attr("font-size", "16")
-        .attr("font-style", "italic")
-        .attr("fill", "white")
-        .text(`Avg Followers Gained: ${numberWithCommas(Math.round(selectedData.avg_followers_gained))}`);
-
-    tgrp.append("text")
-        .attr("x", 5)
-        .attr("y", 98)
-        .attr("text-anchor", "left")
-        .attr("font-family", "sans-serif")
-        .attr("font-size", "16")
-        .attr("font-style", "italic")
-        .attr("fill", "white")
-        .text(`Avg Peak Viewers: ${numberWithCommas(Math.round(selectedData.avg_peak_viewers))}`);
-
-    tgrp.append("text")
-        .attr("x", 5)
-        .attr("y", 114)
-        .attr("text-anchor", "left")
-        .attr("font-family", "sans-serif")
-        .attr("font-size", "16")
-        .attr("font-style", "italic")
-        .attr("fill", "white")
-        .text(`Avg Stream Length: ${numberWithCommas(Math.round(selectedData.avg_stream_length))} minutes`);
-
-    tgrp.append("text")
-        .attr("x", 5)
-        .attr("y", 130)
-        .attr("text-anchor", "left")
-        .attr("font-family", "sans-serif")
-        .attr("font-size", "16")
-        .attr("font-style", "italic")
-        .attr("fill", "white")
-        .text(`Avg Viewers: ${numberWithCommas(Math.round(selectedData.avg_viewers))}`);
-
-    tgrp.append("text")
-        .attr("x", 5)
-        .attr("y", 146)
-        .attr("text-anchor", "left")
-        .attr("font-family", "sans-serif")
-        .attr("font-size", "16")
-        .attr("font-style", "italic")
-        .attr("fill", "white")
-        .text(`Avg Views per Hour: ${numberWithCommas(Math.round(selectedData.avg_views_per_hour))}`);
+        .text(`${selectedData.start.getMonth() + "/" + selectedData.start.getFullYear()}`);
 
     var text_width = null;
 
@@ -947,22 +895,25 @@ function mouseOverSmallChart(t, selectedData) {
             text_width = this.parentNode.getBBox().width;
             return this.parentNode.getBBox().width + 10;
         })
-        .attr("height", "160")
+        .attr("height", "100")
         .attr("fill", "blueviolet")
         .attr("stroke", "black")
         .attr("stroke-width", 1)
         .lower();
 
     const curr_x = parseFloat(d3.select(t).attr("x"));
-    const x_offset = 30;
+    const x_offset = curr_x < screen.width/2 ? 20 : -text_width-20;
     var xpos = curr_x + x_offset;
-    var ypos = parseFloat(d3.select(t).attr("y")) - 40;
+
+    const curr_y = small_chart_height - y_scale(extract_field(selectedData));
+    var ypos = Math.min(Math.max(curr_y, 150), 650);
     tgrp.attr("transform", `translate(${xpos}, ${ypos})`);
 }
 
 function mouseOutSmallChart(t, selectedData) {
-    d3.select(t)
-        .attr("stroke", "white");
-
+    const bar_id = "#small_bar_" + selectedData.start.getFullYear() + "_" + selectedData.start.getMonth();
+    d3.select("#small-chart-svg")
+        .select(bar_id)
+        .attr("fill", "white");
     d3.select("#tooltip").remove();
 }
