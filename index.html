@@ -3,6 +3,10 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta property="og:image" content="https://paidtoplay.fun/img/Narrative/TwitchCrew.png" />
+        <meta property="og:description" content="Can you really make thousands playing video games from your parents' basement? Some are, and they're doing it on a site called Twitch. Started in 2011, Twitch is a streaming service with over 140 million active users per month, accruing an estimated $1.54 billion annual revenue. Users watch their favorite streamers do anything from cook to dance to work out. The most popular type of content on the platform is gaming." />
+        <meta property="og:url" content="https://paidtoplay.fun" />
+        <meta property="og:title" content="Paid to Play: A Breakdown of the Top 100 Twitch Streamers" />
         <title>Paid to Play: Who makes it on Twitch?</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -44,12 +48,12 @@
 
                 <div class="row align-items-center">
                     <div class="col-md-6">
-                        <div id="pie-title " class="d-flex justify-content-center">
+                        <div id="pie-title" class="d-flex justify-content-center">
                             <h2><b>Top 100 Streamers are overwhelmingly male</b></h2>
                         </div>
                         <div class=" d-flex justify-content-center" >
-                            <button onclick="update(data1)" class="btn-secondary"> Twitch Viewers </button>
-                            <button onclick="update(data2)" class="btn-secondary"> Top 100 Streamers</button>
+                            <button onclick="updateGenderPieChart(data2)" class="btn-secondary"> Top 100 Streamers</button>
+                            <button onclick="updateGenderPieChart(data1)" class="btn-secondary"> Twitch Viewers </button>
                         </div>
                         <div class="justify-content-center">
                             <div class="justify-content-center" id="pie-container"></div>
@@ -81,10 +85,18 @@
                 </div>
                 <div id="streamer-panel">
                     <div id="streamer-detail">
-                        <div class="icon-large">
-                            <img src=""/>
+                        <div id="streamer-header">
+                            <div class="icon-large">
+                                <img src=""/>
+                            </div>
+                            <div class="streamer-title"></div>
                         </div>
-                        <div class="streamer-title"></div>
+                        <div class="streamer-field" id="streamer-age">
+                            <span class="label"></span><span class="value"></span>
+                        </div>
+                        <div class="streamer-field" id="streamer-gender">
+                            <span class="label"></span><span class="value"></span>
+                        </div>
                         <div class="streamer-field" id="streamer-rank">
                             <span class="label"></span><span class="value"></span>
                         </div>
@@ -97,6 +109,9 @@
                         <div class="streamer-field" id="streamer-language">
                             <span class="label"></span><span class="value"></span>
                         </div>
+                        <div class="streamer-field" id="streamer-nationality">
+                            <span class="label"></span><span class="value"></span>
+                        </div>
                     </div>
                     <div id="streamer-small-chart">
                         <svg id="small-chart-svg"></svg>
@@ -104,39 +119,42 @@
                 </div>
             </div>
             <div id="selection-panel">
-                <div class="col">
-                    <div class="row align-items-center">
-                        <div class="selector-text">Gender</div>
-                        <div id="gender-buttons">
-                            <button onclick="selectStreamers(gantt_data, data_selection_info, 'gender', 'All')" class="btn btn-primary">
-                                All
-                            </button>
-                            <button onclick="selectStreamers(gantt_data, data_selection_info, 'gender', 'Male')" class="btn btn-primary">
-                                Male
-                            </button>
-                            <button onclick="selectStreamers(gantt_data, data_selection_info, 'gender', 'Female')" class="btn btn-primary">
-                                Female
-                            </button>
-                            <button onclick="selectStreamers(gantt_data, data_selection_info, 'gender', 'NA')" class="btn btn-primary">
-                                N/A
-                            </button>
-                        </div>
-                    </div>
-                    <div class="row align-items-center">
-                        <div class="selector-text">Nationality</div>
-                        <div id="nationality-selector-container"></div>
+                <div>
+                    <div class="selector-text">Gender</div>
+                    <div class="btn-group" role="group" id="gender-buttons">
+                        <button onclick="selectStreamers(gantt_data, data_selection_info, 'gender', 'All')" class="btn btn-primary">
+                            All
+                        </button>
+                        <button onclick="selectStreamers(gantt_data, data_selection_info, 'gender', 'Male')" class="btn btn-primary">
+                            Male
+                        </button>
+                        <button onclick="selectStreamers(gantt_data, data_selection_info, 'gender', 'Female')" class="btn btn-primary">
+                            Female
+                        </button>
+                        <button onclick="selectStreamers(gantt_data, data_selection_info, 'gender', 'N/A')" class="btn btn-primary">
+                            N/A
+                        </button>
                     </div>
                 </div>
-                <div class="col align-items-center space-between">
-                    <div class="row align-items-center">
-                        <div class="selector-text">Age</div>
-                        <div id="age-selector-container"></div>
-                    </div>
-                    <div class="row align-items-center">
-                        <div class="selector-text">Color Encoding</div>
-                        <div id="encoding-selector-container"></div>
+                <div>
+                    <div class="selector-text">Nationality</div>
+                    <div id="nationality-selector-container">
+                        <select class="select form-control" id="nationality-selector"></select>
                     </div>
                 </div>
+                <div>
+                    <div class="selector-text">Age</div>
+                    <div id="age-selector-container">
+                        <select class="select form-control" id="age-selector"></select>
+                    </div>
+                </div>
+                <div>
+                    <div class="selector-text">Color Encoding</div>
+                    <div id="encoding-selector-container">
+                        <select class="select form-control" id="encoding-selector"></select>
+                    </div>
+                </div>
+                <button id="selector-clear-button" class="btn btn-danger">Clear Filters</button>
             </div>
             <div id="gantt-content">
                 <div id="encoding-selector-container"></div>
