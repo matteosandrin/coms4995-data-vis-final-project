@@ -259,11 +259,9 @@ d3.csv("./data/gantt_month_data.csv")
                 .attr("font-size", 20)
                 .on("mouseover", function(event, selectedData) {
                     mouseOverText(this, selectedData);
-                    d3.selectAll("#streamer-tile-img-" + selectedData.Rank).dispatch('mouseover');
                 })
                 .on("mouseout", function(event, selectedData) {
                     mouseOutText(this, selectedData);
-                    d3.selectAll("#streamer-tile-img-" + selectedData.Rank).dispatch('mouseout');
                 })
                 .on("click", function(event, selectedData) {
                     d3.selectAll("#streamer-tile-img-" + selectedData.Rank).dispatch('click');
