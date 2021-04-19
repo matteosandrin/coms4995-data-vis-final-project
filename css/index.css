@@ -95,6 +95,20 @@ a {
   background-color: white;
 }
 
+.streamer-tile-img-deselected {
+    opacity: 0.25;
+    background-color: dimgray;
+}
+
+.streamer-tile-img-hover {
+    opacity: 0.5;
+}
+
+.streamer-tile-img-clicked {
+    opacity: 0.5;
+    background-color: blueviolet;
+}
+
 #streamer-panel {
   display: grid;
   grid-template-columns: 1fr 1fr;

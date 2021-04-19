@@ -81,23 +81,18 @@ d3.csv("./data/gantt_month_data.csv")
             .enter()
                 .append('div')
                     .attr('class', 'icon')
+                    .attr('id', d => 'streamer-tile-img-' + d.Rank)
                     .on('mouseover', function (_, selectedData) {
                         d3.select(this)
                             .each(function (d) {setStreamerDetail(d)})
-                            .transition()
-                                .duration(50)
-                                .style("opacity", "0.5");
-                        
+                            .classed("streamer-tile-img-hover", true);
                         d3.select("#hover_rect_" + selectedData.Rank)
                             .attr("opacity", .8);
                     })
                     .on('mouseout', function (_, selectedData) {
                         d3.select(this)
                             .each(function (d) {setStreamerDetail(currStreamer)})
-                            .transition()
-                                .duration(50)
-                                .style("opacity", "1.0");
-
+                            .classed("streamer-tile-img-hover", false);
                         if (selectedData != currStreamer) {
                             d3.select("#hover_rect_" + selectedData.Rank)
                                 .attr("opacity", 0);
@@ -397,13 +392,11 @@ function setStreamerDetail(streamer) {
 function markAsSelected(elem) {
     // clear previous selections
     d3.selectAll(".icon > img")
-        .style("opacity", "1.0")
-        .style("background-color", "white");
+        .classed("streamer-tile-img-clicked", false);
     // mark element as selected
     d3.select(elem)
         .select("img")
-            .style("opacity", "0.5")
-            .style("background-color", "blueviolet");
+            .classed("streamer-tile-img-clicked", true);
 }
 
 function getStreamsData(raw_data) {
@@ -544,6 +537,9 @@ function selectStreamers(data, data_selection_info, property, value) {
         }
     }
 
+    d3.selectAll(".icon")
+        .classed("streamer-tile-img-deselected", false);
+
     var count_selected = 1;
     for (streamer in selected_streamers) {
         d3.selectAll(selected_streamers[streamer].substr(2))
@@ -598,6 +594,8 @@ function selectStreamers(data, data_selection_info, property, value) {
 
         d3.selectAll("#streamer_text_" + non_selected_ranks[streamer])
             .attr("y", gantt_height + margin.bottom);
+        d3.selectAll("#streamer-tile-img-" + non_selected_ranks[streamer])
+            .classed("streamer-tile-img-deselected", true);
     }
 }
 
