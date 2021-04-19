@@ -1,4 +1,4 @@
-![](https://github.com/matteosandrin/coms4995-data-vis-final-project/blob/master/img/Narrative/TwitchCrew.png?raw=true)
+![](https://github.com/matteosandrin/coms4995-data-vis-final-project/blob/master/img/readme/banner.png?raw=true)
 
 # Paid to Play: A Breakdown of the Top 100 Twitch Streamers
 
