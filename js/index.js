@@ -174,7 +174,7 @@ d3.csv("./data/gantt_month_data.csv")
                 .attr("height", rect_height + height_padding)
                 .attr("y", d => margin.top + (rect_height + height_padding)*d - height_padding/2)
                 .attr("x", margin.left)
-                .attr("fill", "#0e0e10")
+                .attr("fill", "#525252")
                 .attr("rx", 5)
                 .attr("opacity", 0);
 
