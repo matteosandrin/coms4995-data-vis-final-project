@@ -73,6 +73,8 @@ d3.csv("./data/gantt_month_data.csv")
     data = getStreamsData(raw_data);
     gantt_data = data;
 
+    setGenderButtons("All");
+    
     d3.csv("./data/top_100_streamers_with_categorical.csv")
     .then(function (tile_data) {
         streamer_seletor_data = tile_data;
@@ -508,12 +510,44 @@ function getColorScheme(d, value) {
     return color_scheme(encoding.field(d));
 }
 
+function setGenderButtons(value)
+{
+    //set button colors
+    console.log(value);
+    if (value == "Male")
+    {
+        $("#femalebutton").removeClass('button-selected');
+        $("#allbutton").removeClass('button-selected');
+        $("#nabutton").removeClass('button-selected');
+        $("#malebutton").addClass('button-selected');
+    } else if (value == "Female") {
+        $("#femalebutton").addClass('button-selected');
+        $("#allbutton").removeClass('button-selected');
+        $("#nabutton").removeClass('button-selected');
+        $("#malebutton").removeClass('button-selected');
+    } else if (value == "N/A")
+    {
+        $("#femalebutton").removeClass('button-selected');
+        $("#allbutton").removeClass('button-selected');
+        $("#nabutton").addClass('button-selected');
+        $("#malebutton").removeClass('button-selected');
+    } else {
+        $("#femalebutton").removeClass('button-selected');
+        $("#allbutton").addClass('button-selected');
+        $("#nabutton").removeClass('button-selected');
+        $("#malebutton").removeClass('button-selected');
+    }
+    
+}
+
 function selectStreamers(data, data_selection_info, property, value) {
     data_selection_info[property] = value;
     var selected_streamers = {};
     var non_selected_streamers = {};
     var selected_ranks = {};
     var non_selected_ranks = {};
+
+    setGenderButtons(value);
 
     for (const d of data) {
         var selected = true;

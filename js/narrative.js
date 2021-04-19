@@ -157,6 +157,16 @@ var color = d3
   .range([d3.rgb("#bfabFF"), d3.rgb("#57bee6")]);
 
 function updateGenderPieChart(data) {
+  if (data == data2)
+  {
+    $("#viewersbutt").removeClass('button-selected');
+    $("#top100butt").addClass('button-selected');
+  } else {
+    $("#top100butt").removeClass('button-selected');
+    $("#viewersbutt").addClass('button-selected');
+  }
+  
+
   var arcGenerator = d3.arc().innerRadius(0).outerRadius(radius);
 
   var pie = d3

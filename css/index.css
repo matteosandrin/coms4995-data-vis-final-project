@@ -59,6 +59,20 @@ p,
   width: 100%;
 }
 
+
+.btn-secondary {
+  background-color: blueviolet !important;
+  border: none !important;
+}
+
+.btn-secondary:hover{
+  background-color: #6c26ad !important;
+}
+
+.button-selected {
+  background-color: #4b157d !important;
+}
+
 #streamer-icons {
   display: flex;
   flex-flow: row wrap;

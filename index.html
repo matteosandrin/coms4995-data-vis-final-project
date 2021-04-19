@@ -41,6 +41,7 @@
                     </div>
                     <div class="col-md-6">
                         <div id="table-container"></div>
+                        <figcaption style="padding-bottom: 10px">Top 10 streamers ranked by subscriber count</figcaption>
                     </div>
                 </div>
                 <p>Ludwig Ahgren started streaming on Twitch in May, 2018. 3 years later, he's the most subscribed to streamer on twitch with 246611 subscribers. Each pays him $5 a month to watch him play video <a href="https://www.twitch.tv/ludwig">games</a>, <a href="https://www.youtube.com/watch?v=kSwLl82wKQQ">taste test cheeses</a>, or <a href="https://www.youtube.com/watch?v=JMJek_MKFNs">try on costumes with his girlfriend.</a> </p>
@@ -54,8 +55,8 @@
                             <h2><b>Top 100 Streamers are overwhelmingly male</b></h2>
                         </div>
                         <div class=" d-flex justify-content-center" >
-                            <button onclick="updateGenderPieChart(data2)" class="btn btn-secondary"> Top 100 Streamers</button>
-                            <button onclick="updateGenderPieChart(data1)" class="btn btn-secondary"> Twitch Viewers </button>
+                            <button onclick="updateGenderPieChart(data2)" class="btn btn-secondary" id="top100butt"> Top 100 Streamers</button>
+                            <button onclick="updateGenderPieChart(data1)" class="btn btn-secondary" id="viewersbutt"> Twitch Viewers </button>
                         </div>
                         <div class="justify-content-center">
                             <div class="justify-content-center" id="pie-container"></div>
@@ -130,16 +131,16 @@
                     <div class="row align-items-center">
                         <div class="selector-text">Gender</div>
                         <div id="gender-buttons" class="btn-group" role="group">
-                            <button type="button" onclick="selectStreamers(gantt_data, data_selection_info, 'gender', 'All')" class="btn btn-secondary">
+                            <button type="button" onclick="selectStreamers(gantt_data, data_selection_info, 'gender', 'All')" class="btn btn-secondary" id="allbutton">
                                 All
                             </button>
-                            <button type="button" onclick="selectStreamers(gantt_data, data_selection_info, 'gender', 'Male')" class="btn btn-secondary">
+                            <button type="button" onclick="selectStreamers(gantt_data, data_selection_info, 'gender', 'Male')" class="btn btn-secondary" id="malebutton">
                                 Male
                             </button>
-                            <button type="button" onclick="selectStreamers(gantt_data, data_selection_info, 'gender', 'Female')" class="btn btn-secondary">
+                            <button type="button" onclick="selectStreamers(gantt_data, data_selection_info, 'gender', 'Female')" class="btn btn-secondary" id="femalebutton">
                                 Female
                             </button>
-                            <button type="button" onclick="selectStreamers(gantt_data, data_selection_info, 'gender', 'N/A')" class="btn btn-secondary">
+                            <button type="button" onclick="selectStreamers(gantt_data, data_selection_info, 'gender', 'N/A')" class="btn btn-secondary" id="nabutton">
                                 N/A
                             </button>
                         </div>
@@ -183,5 +184,8 @@
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
         <script src="js/index.js" async defer></script>
         <script src="js/narrative.js" async defer></script>
+        <!-- JQuery -->
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+        <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js"></script>
     </body>
 </html>
