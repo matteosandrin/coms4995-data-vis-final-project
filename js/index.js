@@ -59,6 +59,7 @@ const height_padding = 14;
 const num_streamers = 100;
 const rect_height = (gantt_height - margin.top - margin.bottom)/(num_streamers+1) - height_padding;
 
+const small_chart_width = 1425;
 const small_chart_height = 1000;
 
 // Use so axes are not repeatedly drawn
@@ -123,7 +124,7 @@ d3.csv("./data/gantt_month_data.csv")
         
         const date_extent = d3.extent(data.map(d => d.start));
         total_months = dateDiff(date_extent[0], date_extent[1]);
-        const text_padding = 240;
+        const text_padding = 250;
         const date_scale = d3.scaleLinear()
             .domain([0, total_months])
             .range([text_padding, screen.width - margin.right]);
@@ -743,7 +744,7 @@ function mouseOutGantt(t, selectedDate) {
 
 function mouseOverText(t, selectedData) {
     d3.select(t)
-        .attr("font-size", 22)
+        .attr("font-size", 21)
         .attr("font-weight", "bold");
 
     d3.select("#hover_rect_" + selectedData.Rank)
@@ -812,14 +813,14 @@ function createSmallChart(data, curr_rank, encoding, total_months, first_month) 
 
     const chart_margin = {left: 150, right: 40, top: 100, bottom: 160};
     d3.select("#small-chart-svg")
-        .attr("viewBox", [0, 0, screen.width, small_chart_height]);
+        .attr("viewBox", [0, 0, small_chart_width, small_chart_height]);
 
     const streamer_data = data.filter(d => d.rank == curr_rank);
     const extract_field = color_obj[encoding]['field'];
     const y_domain = [0, d3.extent(streamer_data.map(d => extract_field(d)))[1]];
     
     const bar_padding = 5;
-    const bar_width = (screen.width - margin.left - margin.right)/total_months - bar_padding;
+    const bar_width = (small_chart_width - margin.left - margin.right)/total_months - bar_padding;
 
     const y_scale  = d3.scaleLinear()
         .domain(y_domain)
@@ -827,7 +828,7 @@ function createSmallChart(data, curr_rank, encoding, total_months, first_month) 
 
     const x_scale = d3.scaleLinear()
         .domain([0, total_months])
-        .range([chart_margin.left, screen.width - chart_margin.right - bar_width]);
+        .range([chart_margin.left, small_chart_width - chart_margin.right - bar_width]);
 
     const x_axis_ticks = [
         {date: new Date(2015, 6), label: '7/2015'},
@@ -852,7 +853,7 @@ function createSmallChart(data, curr_rank, encoding, total_months, first_month) 
         d3.select("#small-chart-svg")
             .append("line")
             .attr("x1", chart_margin.left)
-            .attr("x2", screen.width - chart_margin.right)
+            .attr("x2", small_chart_width - chart_margin.right)
             .attr("y1", small_chart_height - chart_margin.bottom + axis_pad)
             .attr("y2", small_chart_height - chart_margin.bottom + axis_pad)
             .attr("stroke-weight", 5)
@@ -954,7 +955,7 @@ function createSmallChart(data, curr_rank, encoding, total_months, first_month) 
     const title = streamer_data[0].name + "'s " + encoding;
     d3.select("#small-chart-svg")
         .append("text")
-        .attr("x", screen.width/2)
+        .attr("x", small_chart_width/2)
         .attr("y", chart_margin.top/2.5)
         .text(title)
         .attr("fill", "white")
@@ -1009,7 +1010,7 @@ function mouseOverSmallChart(t, selectedData, extract_field, y_scale) {
         .lower();
 
     const curr_x = parseFloat(d3.select(t).attr("x"));
-    const x_offset = curr_x < screen.width/2 ? 30 : -text_width-20;
+    const x_offset = curr_x < small_chart_width/2 ? 30 : -text_width-20;
     var xpos = curr_x + x_offset;
 
     const curr_y = small_chart_height - y_scale(extract_field(selectedData));

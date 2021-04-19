@@ -120,7 +120,7 @@ function numberWithCommas(x) {
 var data1 = {};
 var data2 = {};
 d3.csv("data/top_10_subs.csv").then(function (data) {
-  var columns = ["Rank", "Streamer", "Subscribers"];
+  var columns = ["Rank*", "Streamer", "Subscribers"];
   var dataArray = data.map((d) => [d.Rank, d.Name, d.Subscriber_Count]);
   tabulate(dataArray, columns);
 });
