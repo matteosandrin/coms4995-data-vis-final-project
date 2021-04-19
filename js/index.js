@@ -717,8 +717,7 @@ function mouseOverText(t, selectedData) {
     d3.select("#hover_rect_" + selectedData.Rank)
         .attr("opacity", .8);
 
-    d3.select(t).style("cursor", "pointer"); 
-    t.parentElement.appendChild(t);
+    d3.select(t).style("cursor", "pointer");
 }
 
 function mouseOutText(t, selectedData) {
