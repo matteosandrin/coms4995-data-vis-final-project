@@ -3,10 +3,15 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta property="og:image" content="https://paidtoplay.fun/img/Narrative/TwitchCrew.png" />
+        <meta property="og:description" content="Can you really make thousands playing video games from your parents' basement? Some are, and they're doing it on a site called Twitch. Started in 2011, Twitch is a streaming service with over 140 million active users per month, accruing an estimated $1.54 billion annual revenue. Users watch their favorite streamers do anything from cook to dance to work out. The most popular type of content on the platform is gaming." />
+        <meta property="og:url" content="https://paidtoplay.fun" />
+        <meta property="og:title" content="Paid to Play: A Breakdown of the Top 100 Twitch Streamers" />
         <title>Paid to Play: Who makes it on Twitch?</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="css/index.css">
+        <link rel="stylesheet" href="css/tooltip.css">
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
         <link rel="preconnect" href="https://fonts.gstatic.com">
         <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@100&display=swap" rel="stylesheet">
@@ -22,10 +27,11 @@
                         <figcaption>From top to bottom, left to right: Imane Anys (Pokimane), Thomas Simons (TommyInnit), Ali Kabbani (Myth), Hikaru Nakamura (Hikaru), Ludwig Ahgren (Ludwig).</figcaption>
                     </figure>
                 </div>
-                <h1><b>Paid to Play: </b>A Breakdown of the Top 100 Twitch Streamers</h1>
-                <h3>By Alex Cohen, Joseph Hier, Hollis Lehv, and Matteo Sandrin</h3>
+                <h1 class="column-text"><b>Paid to Play: </b>A Breakdown of the Top 100 Twitch Streamers</h1>
+                <h3 class="column-text">By Alex Cohen, Joseph Hier, Hollis Lehv, and Matteo Sandrin</h3>
                 <br>
-                <p>Can you really make thousands playing video games from your parents' basement? Some are, and they're doing it on a site called Twitch. Started in 2011, Twitch is a streaming service with over 140 million active users per month, accruing an estimated $1.54 billion annual revenue. Users watch their favorite streamers do anything from cook to dance to work out. The most popular type of content on the platform is gaming. </p>
+                <p>Can you really make thousands playing video games from your parents' basement? Some are, and they're doing it on a site called Twitch. Started in 2011, Twitch is a streaming service with over 140 million active users per month, accruing an estimated $1.54 billion annual revenue. Though the most known for live game streaming, Twitch has become a community of its own
+                with users watching their favorite streamers do anything from cook to dance to work out.</p>
                 <div class="row align-items-center">
                     <div class="col-md-6">
                         <figure>
@@ -37,19 +43,27 @@
                         <div id="table-container"></div>
                     </div>
                 </div>
+<<<<<<< HEAD
                 <p>Ludwig Ahgren started streaming on Twitch in May, 2018. 3 years later, he's the most subscribed to streamer on twitch with 246611 subscribers. Each pays him $5 a month to watch him play video <a href="https://www.twitch.tv/ludwig">games</a>, <a href="https://www.youtube.com/watch?v=kSwLl82wKQQ">taste test cheeses</a>, or <a href="https://www.youtube.com/watch?v=JMJek_MKFNs">try on costumes with his girlfriend.</a> </p>
                 <p> Ahgren's subscriber count skyrocked in early March 2021 when he began a "subathon", an event in which a streamer performs actions or offers rewards in return for subscriptions. Ahgren's reward was to stay live a few seconds longer for every subscriber. At the time of writing, he has been streaming non-stop for 28 days. </p>
                 <p>Mr. Ahgren isn't alone in the amount of money he has made streaming. Streamers can make tens of thousands of dollars per month. Mr. Ahgren has revealed he made at least $100,000 over the course of his 28 day subathon. </p>
                 <p>So who exactly are these content creaters making boatloads of money working at home playing video games?</p>
+=======
+                <p>Currently, the most subscribed to streamer on Twitch is Ludwig Ahgren. He
+                started streaming in May, 2018 and has amassed nearly 240,000 subscribers since. With a subscription to a streamer costing $5 a month, subscribers are paying a sum total of nearly $1.2 million per month to watch Ahgren do such things as <a href="https://www.youtube.com/watch?v=kSwLl82wKQQ">taste test cheeses</a>, <a href="https://www.youtube.com/watch?v=JMJek_MKFNs">try on costumes with his girlfriend</a>, or &mdash;of course&mdash; <a href="https://www.twitch.tv/ludwig">play video games</a>.</p>
+                <p> Ahgren's subscriber count skyrocketed in early March 2021 when he began a "subathon", an event in which a streamer performs actions or offers rewards in return for subscriptions. Ahgren's reward was to stay live a few seconds longer for every subscriber. The result? A 31-day long live stream. It is worth noting that Ahgren capped the stream at 31-days. How long the stream would have lasted otherwise is anyone's guess.</p>
+                <p>Augren revealed that he made at least $100,000 over the course of this subathon. But Ahgren isn't alone in the amount of money he has made streaming. Streamers can make tens of thousands of dollars per month on Twitch. </p>
+                <p>So who exactly are these content creators making boatloads of money working at home playing video games?</p>
+>>>>>>> a3354e8fa593825e25e451757cf451b4be5e1f92
 
                 <div class="row align-items-center">
                     <div class="col-md-6">
-                        <div id="pie-title " class="d-flex justify-content-center">
+                        <div id="pie-title" class="d-flex justify-content-center">
                             <h2><b>Top 100 Streamers are overwhelmingly male</b></h2>
                         </div>
                         <div class=" d-flex justify-content-center" >
-                            <button onclick="update(data1)" class="btn-secondary"> Twitch Viewers </button>
-                            <button onclick="update(data2)" class="btn-secondary"> Top 100 Streamers</button>
+                            <button onclick="updateGenderPieChart(data2)" class="btn-secondary"> Top 100 Streamers</button>
+                            <button onclick="updateGenderPieChart(data1)" class="btn-secondary"> Twitch Viewers </button>
                         </div>
                         <div class="justify-content-center">
                             <div class="justify-content-center" id="pie-container"></div>
@@ -62,19 +76,29 @@
                         </figure>
                     </div>
                 </div>
+<<<<<<< HEAD
         
                 <p>Like 98% of the top 100 streamers on Twitch, Mr. Ahgren is male. Despite 35% of viewers on Twitch being female, the top eschelon of streamers remain overwhelmingly male. </p>
                 <p>One of the rare female streamers in the top 100 is Imane Anys or Pokimane. Anys began streaming in 2013 playing games like League of Legends, and Fortnite. </p>
+=======
+
+                <p> Like 98% of the top 100 streamers on Twitch, Ahgren is male. Despite 35% of viewers on Twitch being female, the top echelon of streamers remain overwhelmingly male. </p>
+                <p>One of the rare female streamers in the top 100 is Imane Anys or Pokimane. Anys began streaming in 2013 playing games like League of Legends and Fortnite. </p>
+>>>>>>> a3354e8fa593825e25e451757cf451b4be5e1f92
                 <p>In terms of her age, she's no anomaly. Like 36% of top 100 streamers she's between 23 and 27 years old (24).</p>
                 <div class = "row d-flex justify-content-center">
                     <div class = "col-md-6">
                         <div id="bar-container"></div>
                     </div>
                 </div>
-                <p>Some have questions about the lasting potential of Twitch. Is a business model based around voluntary subscriptions and donations sustainable? Will the lack of diversity on Twitch be its downfall? Will twitch expand to a wider audience beyond gaming? We invite you to think about these questions as you explore the backgrounds, personalities, and stories of the Twitch elite. </p>
+                <p>Some question the lasting potential of Twitch. Is a business model based around voluntary subscriptions and donations sustainable? Will the lack of diversity on Twitch be its downfall? Will twitch expand to a wider audience beyond gaming? We invite you to think about these questions as you explore the backgrounds, personalities, and stories of the Twitch elite.</p>
                 <br>
-                <div class="top-100"><b>The Top 100</b></div>
-                <p>Explore the top 100 streamers with our interactive tool.</p>
+                <h2 class="column-text">The Top 100<span data-tooltip='We chose to define "top 100" as the one-hundred most-watched channels over the past 365 days. We reasoned that using this metric would limit the influence of seasonal trends, while placing an emphasis recent creators.'>*</span></h2>
+                <p>
+                    Explore the top 100 streamers with our interactive tool.
+                    In the chart at the bottom, each section of a streamer's row represents their streams in that month. The color encoding corresponds to the average value of streams in that particular month.
+                    The empty spaces in each row signify months in which a streamer did not stream at all.
+                </p>
             </div>
             <div class="black-background">
             <div class="streamer-tiles-container">
@@ -82,10 +106,18 @@
                 </div>
                 <div id="streamer-panel">
                     <div id="streamer-detail">
-                        <div class="icon-large">
-                            <img src=""/>
+                        <div id="streamer-header">
+                            <div class="icon-large">
+                                <img src=""/>
+                            </div>
+                            <div class="streamer-title"></div>
                         </div>
-                        <div class="streamer-title"></div>
+                        <div class="streamer-field" id="streamer-age">
+                            <span class="label"></span><span class="value"></span>
+                        </div>
+                        <div class="streamer-field" id="streamer-gender">
+                            <span class="label"></span><span class="value"></span>
+                        </div>
                         <div class="streamer-field" id="streamer-rank">
                             <span class="label"></span><span class="value"></span>
                         </div>
@@ -98,6 +130,9 @@
                         <div class="streamer-field" id="streamer-language">
                             <span class="label"></span><span class="value"></span>
                         </div>
+                        <div class="streamer-field" id="streamer-nationality">
+                            <span class="label"></span><span class="value"></span>
+                        </div>
                     </div>
                     <div id="streamer-small-chart">
                         <svg id="small-chart-svg"></svg>
@@ -105,6 +140,7 @@
                 </div>
             </div>
             <div id="selection-panel">
+<<<<<<< HEAD
                 <div class="col">
                     <div class="row align-items-center">
                         <div class="selector-text">Gender</div>
@@ -122,28 +158,56 @@
                                 N/A
                             </button>
                         </div>
-                    </div>
-                    <div class="row align-items-center">
-                        <div class="selector-text">Nationality</div>
-                        <div id="nationality-selector-container"></div>
+=======
+                <div>
+                    <div class="selector-text">Gender</div>
+                    <div class="btn-group" role="group" id="gender-buttons">
+                        <button onclick="selectStreamers(gantt_data, data_selection_info, 'gender', 'All')" class="btn btn-primary">
+                            All
+                        </button>
+                        <button onclick="selectStreamers(gantt_data, data_selection_info, 'gender', 'Male')" class="btn btn-primary">
+                            Male
+                        </button>
+                        <button onclick="selectStreamers(gantt_data, data_selection_info, 'gender', 'Female')" class="btn btn-primary">
+                            Female
+                        </button>
+                        <button onclick="selectStreamers(gantt_data, data_selection_info, 'gender', 'N/A')" class="btn btn-primary">
+                            N/A
+                        </button>
+>>>>>>> a3354e8fa593825e25e451757cf451b4be5e1f92
                     </div>
                 </div>
-                <div class="col align-items-center space-between">
-                    <div class="row align-items-center">
-                        <div class="selector-text">Age</div>
-                        <div id="age-selector-container"></div>
-                    </div>
-                    <div class="row align-items-center">
-                        <div class="selector-text">Color Encoding</div>
-                        <div id="encoding-selector-container"></div>
+                <div>
+                    <div class="selector-text">Nationality</div>
+                    <div id="nationality-selector-container">
+                        <select class="select form-control" id="nationality-selector"></select>
                     </div>
                 </div>
+                <div>
+                    <div class="selector-text">Age</div>
+                    <div id="age-selector-container">
+                        <select class="select form-control" id="age-selector"></select>
+                    </div>
+                </div>
+                <div>
+                    <div class="selector-text">Color Encoding</div>
+                    <div id="encoding-selector-container">
+                        <select class="select form-control" id="encoding-selector"></select>
+                    </div>
+                </div>
+                <button id="selector-clear-button" class="btn btn-danger">Clear Filters</button>
             </div>
             <div id="gantt-content">
                 <div id="encoding-selector-container"></div>
                 <div id="gantt-chart-container" height="100%">
                     <svg id="gantt-chart-svg" height="100%"></svg>
                 </div>
+            </div>
+            <div class="data-provenance">
+                <h2 class="column-text">Who's your (data) source?</h2>
+                <p>The data for this visualization was gathered from <a href="https://www.sullygnome.com/">sullygnome.com</a>, which is a statistics and analytics service for Twitch. SullyGnome uses the Twitch API to collect information on every Twitch streamer with 3 or more viewers, at 15-minute intervals. This data is then aggregated and displayed on the website. The historical data provided by SullyGnome goes as far back as 2015. </p>
+                <br>
+                <p>We wrote a collection of Python scripts to scrape ranking, viewer, follower and subscriber historical data from SullyGnome, for each of the top 100 Twitch streamers. These scripts were run in a staggered fashion over the course of a 24-hour window, with the aim of reducing load on SullyGnome’s servers. For each top 100 streamer, we also individually researched, filled in, and aggregated a number biographical data points (age, nationality, career, etc.).</p>
             </div>
         </div>
         </div>

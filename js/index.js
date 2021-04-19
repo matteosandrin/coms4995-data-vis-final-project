@@ -20,9 +20,7 @@ const selection_options = [
 ];
         
 var select_encoding = d3.select('#encoding-selector-container')
-    .append('select')
-        .attr('class', 'select')
-        .attr("id", "encoding-selector")
+    .select('select')
         .on('change', changeEncoding);
 
 select_encoding
@@ -43,22 +41,41 @@ var data_selection_info = {
 };
 
 const data_selection_options = {
-    'gender': ['All', 'Male', 'Female', 'NA'],
-    'age': ['All', 'Less than 18', '18-22', '23-27', '28-32', '33-39', '40 and Up'],
+    'gender': ['All', 'Male', 'Female', 'N/A'],
+    'age': ['All', 'N/A', 'Less than 18', '18-22', '23-27', '28-32', '33-39', '40 and Up'],
 };
 
-const margin = {top: 110, left: 0, right: 20, bottom: 20};
+const margin = {top: 110, left: 0, right: 30, bottom: 20};
 
 var data = [];
 var total_months = 0;
 var first_month = 0;
 var curr_encoding = encoding_options[0];
 
+const gantt_height = 2800;
+            
+const width_padding = -.5;
+const height_padding = 14;
+const num_streamers = 100;
+const rect_height = (gantt_height - margin.top - margin.bottom)/(num_streamers+1) - height_padding;
+
+const small_chart_height = 1000;
+
+// Use so axes are not repeatedly drawn
+var small_chart_created = false;
+
+var streamer_seletor_data = [];
+
 // Gantt Chart
-d3.csv("https://raw.githubusercontent.com/matteosandrin/coms4995-data-vis-final-project/gantt-chart/data/top_100_streamers_last_365_days.csv")
+d3.csv("./data/gantt_month_data.csv")
+.then(function (raw_data) {
+
+    data = getStreamsData(raw_data);
+    gantt_data = data;
+
+    d3.csv("./data/top_100_streamers_with_categorical.csv")
     .then(function (tile_data) {
-d3.csv("https://raw.githubusercontent.com/matteosandrin/coms4995-data-vis-final-project/gantt-chart/data/gantt_month_data.csv")
-    .then(function (raw_data) {
+        streamer_seletor_data = tile_data;
         currStreamer = tile_data[0];
         setStreamerDetail(currStreamer);
         d3.select('#streamer-icons')
@@ -67,21 +84,27 @@ d3.csv("https://raw.githubusercontent.com/matteosandrin/coms4995-data-vis-final-
             .enter()
                 .append('div')
                     .attr('class', 'icon')
-                    .on('mouseover', function () {
+                    .attr('id', d => 'streamer-tile-img-' + d.Rank)
+                    .on('mouseover', function (_, selectedData) {
                         d3.select(this)
                             .each(function (d) {setStreamerDetail(d)})
-                            .transition()
-                                .duration(50)
-                                .style("opacity", "0.5");
+                            .classed("streamer-tile-img-hover", true);
+                        d3.select("#hover_rect_" + selectedData.Rank)
+                            .attr("opacity", .8);
                     })
-                    .on('mouseout', function () {
+                    .on('mouseout', function (_, selectedData) {
                         d3.select(this)
                             .each(function (d) {setStreamerDetail(currStreamer)})
-                            .transition()
-                                .duration(50)
-                                .style("opacity", "1.0");
+                            .classed("streamer-tile-img-hover", false);
+                        if (selectedData != currStreamer) {
+                            d3.select("#hover_rect_" + selectedData.Rank)
+                                .attr("opacity", 0);
+                        }
                     })
-                    .on('click', function() {
+                    .on('click', function(_, selectedData) {
+                        d3.select("#hover_rect_" + currStreamer.Rank)
+                            .attr("opacity", 0);
+
                         d3.select(this)
                             .each(function (d) {
                                 currStreamer = d;
@@ -89,37 +112,76 @@ d3.csv("https://raw.githubusercontent.com/matteosandrin/coms4995-data-vis-final-
                             })
                         
                         createSmallChart(data, currStreamer.Rank, curr_encoding, total_months, first_month);
+                        
+                        d3.select("#hover_rect_" + selectedData.Rank)
+                            .attr("opacity", .8);
                     })
                 .append('img')
                     .attr('src', d => getImageUrl(d));
-
-        data = getStreamsData(raw_data);
-        gantt_data = data;
         
         const date_extent = d3.extent(data.map(d => d.start));
         total_months = dateDiff(date_extent[0], date_extent[1]);
         const text_padding = 240;
         const date_scale = d3.scaleLinear()
             .domain([0, total_months])
-            .range([text_padding, screen.width]);
-
-        const height = 2800;
-            
-        const width_padding = 1;
-        const height_padding = 14;
-        const num_streamers = 100;
-        const rect_height = (height - margin.top - margin.bottom)/(num_streamers+1) - height_padding;
+            .range([text_padding, screen.width - margin.right]);
         
-        const rect_width = (screen.width - text_padding)/total_months - width_padding;
+        const rect_width = (screen.width - text_padding - margin.right)/total_months - width_padding;
 
         data_selection_options['nationality'] = ['All', ...new Set(data.map(d => d.nationality))];
 
         d3.select('#gantt-chart-svg')
-            .attr("viewBox", [0, 0, screen.width, height]);
+            .attr("viewBox", [0, 0, screen.width, gantt_height]);
+
+        // Add text and rect for no streamers in filter
+        const no_streamers_rect_width = 450;
+        const no_streamers_rect_height = 50;
+        d3.select("#gantt-chart-svg")
+            .append("rect")
+            .attr("id", "no-streamers-rect")
+            .attr("y", margin.top + 68 - no_streamers_rect_height/2)
+            .attr("x", screen.width/2 - no_streamers_rect_width/2)
+            .attr("fill", "red")
+            .attr("opacity", 0)
+            .attr("rx", 10)
+            .attr("height", no_streamers_rect_height)
+            .attr("width", no_streamers_rect_width);
+
+        d3.select("#gantt-chart-svg")
+            .append("text")
+            .attr("id", "no-streamers-text")
+            .attr("y", margin.top + 80)
+            .attr("x", screen.width/2)
+            .text("No Streamers Match this Filter")
+            .attr("text-anchor", "middle")
+            .attr("stroke-weight", .5)
+            .attr("fill", "white")
+            .attr("opacity", 0)
+            .attr("font-size", 30);
+
+        // Selector rects for streamers on hover
+        d3.select('#gantt-chart-svg')
+            .append('g')
+            .attr("id", "hover_rect_g")
+            .selectAll('rect')
+            .data([...new Set(data.map(d => d.rank))])
+            .join('rect')
+                .attr("id", d => "hover_rect_" + d)
+                .attr("width", screen.width)
+                .attr("height", rect_height + height_padding)
+                .attr("y", d => margin.top + (rect_height + height_padding)*d - height_padding/2)
+                .attr("x", margin.left)
+                .attr("fill", "#0e0e10")
+                .attr("rx", 5)
+                .attr("opacity", 0);
+
+        d3.select("#hover_rect_" + currStreamer.Rank)
+            .attr("opacity", .8);
 
         // Make the gantt chart rects
         d3.select('#gantt-chart-svg')
             .append('g')
+            .attr("id", "gantt-chart-rects")
             .selectAll('rect')
             .data(data)
             .join('rect')
@@ -135,36 +197,6 @@ d3.csv("https://raw.githubusercontent.com/matteosandrin/coms4995-data-vis-final-
                 })
                 .on("mouseout", function(event, selectedData) {
                     mouseOutGantt(this, selectedData);
-                });
-
-        // Make text for rankings of streamers
-        d3.select("#gantt-chart-svg")
-            .append("text")
-            .attr("x", text_padding - 14)
-            .attr("y", margin.top)
-            .attr("text-anchor", "end")
-            .attr("font-weight", "bold")
-            .attr("fill", "white")
-            .attr("font-size", 20)
-            .text("Streamer (rank)");
-
-        d3.select("#gantt-chart-svg")
-            .append("g")
-            .selectAll("text")
-            .data([...new Set(data.map(d => d.name))])
-            .join("text")
-                .attr("id", (d, i) => "streamer_text_" + (i+1))
-                .attr("y", (d, i) => margin.top + (rect_height + height_padding)*(i+1) + rect_height/2 + 2.5)
-                .attr("x", text_padding - 14)
-                .text((d, i) => d + " (" + (i+1) + ")")
-                .attr("text-anchor", "end")
-                .attr("fill", "white")
-                .attr("font-size", 20)
-                .on("mouseover", function(event, selectedData) {
-                    mouseOverText(this, selectedData);
-                })
-                .on("mouseout", function(event, selectedData) {
-                    mouseOutText(this, selectedData);
                 });
 
         // Text for years/months
@@ -189,7 +221,7 @@ d3.csv("https://raw.githubusercontent.com/matteosandrin/coms4995-data-vis-final-
                 .attr("text-anchor", "start")
                 .attr("stroke-weight", .5)
                 .attr("fill", "white")
-                .attr("font-size", 20);
+                .attr("font-size", 17);
 
         d3.select("#gantt-chart-svg")
             .append("g")
@@ -199,13 +231,45 @@ d3.csv("https://raw.githubusercontent.com/matteosandrin/coms4995-data-vis-final-
                 .attr("x1", d => date_scale(dateDiff(d.date, date_extent[0])))
                 .attr("x2", d => date_scale(dateDiff(d.date, date_extent[0])))
                 .attr("y1", margin.top + rect_height + height_padding - 40)
-                .attr("y2", height - margin.bottom)
+                .attr("y2", gantt_height - margin.bottom)
                 .attr("stroke", "white");
 
+        // Make text for rankings of streamers
+        d3.select("#gantt-chart-svg")
+            .append("text")
+            .attr("x", text_padding - 14)
+            .attr("y", margin.top)
+            .attr("text-anchor", "end")
+            .attr("font-weight", "bold")
+            .attr("fill", "white")
+            .attr("font-size", 20)
+            .text("Streamer (rank)");
+
+        d3.select("#gantt-chart-svg")
+            .append("g")
+            .selectAll("text")
+            .data(tile_data)
+            .join("text")
+                .attr("id", (d, i) => "streamer_text_" + (i+1))
+                .attr("y", (d, i) => margin.top + (rect_height + height_padding)*(i+1) + rect_height/2 + 7)
+                .attr("x", text_padding - 14)
+                .text((d, i) => d.Channel + " (" + (i+1) + ")")
+                .attr("text-anchor", "end")
+                .attr("fill", "white")
+                .attr("font-size", 20)
+                .on("mouseover", function(event, selectedData) {
+                    mouseOverText(this, selectedData);
+                })
+                .on("mouseout", function(event, selectedData) {
+                    mouseOutText(this, selectedData);
+                })
+                .on("click", function(event, selectedData) {
+                    d3.selectAll("#streamer-tile-img-" + selectedData.Rank).dispatch('click');
+                    d3.selectAll("#streamer-tile-img-" + selectedData.Rank).dispatch('mouseover');
+                });
+
         var select_nationality = d3.select('#nationality-selector-container')
-            .append('select')
-                .attr('class', 'select')
-                .attr("id", "nationality-selector")
+            .select('select')
                 .on('change', function() { changeNationality(data, data_selection_info) });
 
         select_nationality
@@ -216,9 +280,7 @@ d3.csv("https://raw.githubusercontent.com/matteosandrin/coms4995-data-vis-final-
                 .text(function (d) { return d; });
 
         var select_age = d3.select('#age-selector-container')
-            .append('select')
-                .attr('class', 'select')
-                .attr("id", "age-selector")
+            .select('select')
                 .on('change', function() { changeAge(data, data_selection_info) });
 
         select_age
@@ -228,12 +290,14 @@ d3.csv("https://raw.githubusercontent.com/matteosandrin/coms4995-data-vis-final-
             .append('option')
                 .text(function (d) { return d; });
 
+        d3.select('#selector-clear-button')
+            .on('click', () => clearStreamerSelection(data));
+
         makeLegend(encoding_options[0]);
 
         first_month = date_extent[0];
         createSmallChart(data, currStreamer.Rank, curr_encoding, total_months, first_month);
-    }
-)
+    });
 });
 
 const color_obj = {
@@ -271,13 +335,46 @@ function numberWithCommas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
+function numberToOrdinal(num) {
+    var j = num % 10,
+        k = num % 100;
+    if (j == 1 && k != 11) {
+        return num + "st";
+    }
+    if (j == 2 && k != 12) {
+        return num + "nd";
+    }
+    if (j == 3 && k != 13) {
+        return num + "rd";
+    }
+    return num + "th";
+}
+
 function setStreamerDetail(streamer) {
     d3.select('.icon-large > img').attr('src', getImageUrl(streamer));
 
     d3.select('.streamer-title').text(streamer.Channel);
 
+    if (streamer.Age != "N/A") {
+        d3.select('#streamer-age > .label').text('age');
+        d3.select('#streamer-age > .value').text(streamer.Age);
+    } else {
+        // hide if there is no nationality on record
+        d3.select('#streamer-age > .label').text('');
+        d3.select('#streamer-age > .value').text('');
+    }
+
+    if (streamer.Gender != "N/A") {
+        d3.select('#streamer-gender > .label').text('gender');
+        d3.select('#streamer-gender > .value').text(streamer.Gender);
+    } else {
+        // hide if there is no nationality on record
+        d3.select('#streamer-gender > .label').text('');
+        d3.select('#streamer-gender > .value').text('');
+    }
+
     d3.select('#streamer-rank > .label').text('rank');
-    d3.select('#streamer-rank > .value').text(streamer.Rank);
+    d3.select('#streamer-rank > .value').text(numberToOrdinal(streamer.Rank));
 
     d3.select('#streamer-followers > .label').text('followers');
     d3.select('#streamer-followers > .value').text(numberWithCommas(streamer.Followers));
@@ -288,18 +385,25 @@ function setStreamerDetail(streamer) {
 
     d3.select('#streamer-language > .label').text('language');
     d3.select('#streamer-language > .value').text(streamer.Language);
+
+    if (streamer.Nationality != "N/A") {
+        d3.select('#streamer-nationality > .label').text('nationality');
+        d3.select('#streamer-nationality > .value').text(streamer.Nationality);
+    } else {
+        // hide if there is no nationality on record
+        d3.select('#streamer-nationality > .label').text('');
+        d3.select('#streamer-nationality > .value').text('');
+    }
 }
 
 function markAsSelected(elem) {
     // clear previous selections
     d3.selectAll(".icon > img")
-        .style("opacity", "1.0")
-        .style("background-color", "white");
+        .classed("streamer-tile-img-clicked", false);
     // mark element as selected
     d3.select(elem)
         .select("img")
-            .style("opacity", "0.5")
-            .style("background-color", "blueviolet");
+            .classed("streamer-tile-img-clicked", true);
 }
 
 function getStreamsData(raw_data) {
@@ -326,7 +430,7 @@ function getStreamsData(raw_data) {
         
         const raw_start_date = curr_obj['start_month'].split('-');
         const gender = curr_obj['gender'];
-        const nat = curr_obj['nationality'];
+        const nat = curr_obj['nationality'] == 'Frence' ? 'French' : curr_obj['nationality'];
         const birth_year = curr_obj['birth_year'];
         const age = birth_year != '' ? 2021 - parseInt(birth_year) : -1;
         
@@ -334,8 +438,8 @@ function getStreamsData(raw_data) {
             rank: parseInt(curr_obj['rank']),
             name: curr_obj['streamer'],
             start: new Date('20' + raw_start_date[1], months[raw_start_date[0]]),
-            gender: gender == 'Male' || gender == 'Female' ? gender : 'NA',
-            nationality: nat != '' && nat != 'N/A' ? nat : 'NA',
+            gender: gender == 'Male' || gender == 'Female' ? gender : 'N/A',
+            nationality: nat != '' && nat != 'N/A' ? nat : 'N/A',
             age: age,
             stream_count: parseInt(curr_obj['count']),
             avg_followers_gained: parseFloat(curr_obj['avg_followers_gained']),
@@ -353,6 +457,9 @@ function dateDiff(date_1, date_2) {
     first_date = date_1 < date_2 ? date_1 : date_2;
     second_date = date_1 < date_2 ? date_2 : date_1;
 
+    first_date = new Date(first_date);
+    second_date = new Date(second_date);
+
     var months = (second_date.getFullYear() - first_date.getFullYear())*12;
     months -= first_date.getMonth();
     months += second_date.getMonth();
@@ -366,6 +473,7 @@ function changeEncoding() {
     makeLegend(curr_encoding);
 
     d3.select('#gantt-chart-svg')
+        .select("#gantt-chart-rects")
         .selectAll('rect')
         .attr("fill", d => getColorScheme(d, curr_encoding));
 
@@ -382,6 +490,7 @@ function changeAge(data, data_selection_info) {
     const select_value = d3.select('#age-selector').property('value');
     const value_to_range = {
         'All': 'All',
+        'N/A': [-2, -1],
         'Less than 18': [0, 17],
         '18-22': [18, 22],
         '23-27': [23, 27],
@@ -401,13 +510,17 @@ function getColorScheme(d, value) {
 
 function selectStreamers(data, data_selection_info, property, value) {
     data_selection_info[property] = value;
+    var selected_streamers = {};
+    var non_selected_streamers = {};
+    var selected_ranks = {};
+    var non_selected_ranks = {};
 
     for (const d of data) {
         var selected = true;
         for (const key of Object.keys(data_selection_info)) {
             if (data_selection_info[key] != 'All' && d[key] != data_selection_info[key]) {
                 if (key == 'age') {
-                    if (d[key] < value[0] || d[key] > value[1]) {
+                    if (d[key] < data_selection_info[key][0] || d[key] > data_selection_info[key][1]) {
                         selected = false;
                         break;
                     }
@@ -421,8 +534,98 @@ function selectStreamers(data, data_selection_info, property, value) {
         const curr_id = "#gantt_rect_" + d.rank + "_" + d.start.getFullYear() + "_" + d.start.getMonth();
         d3.select(curr_id)
             .attr("opacity", selected ? 1 : .1);
+
+        if (selected) {
+            selected_streamers[d.name] = selected_streamers[d.name] + ", " + curr_id;
+            selected_ranks[d.name] = d.rank;
+        } else {
+            non_selected_streamers[d.name] = non_selected_streamers[d.name] + ", " + curr_id;
+            non_selected_ranks[d.name] = d.rank;
+        }
     }
 
+    d3.selectAll(".icon")
+        .classed("streamer-tile-img-deselected", false);
+
+    var count_selected = 1;
+    for (streamer in selected_streamers) {
+        d3.selectAll(selected_streamers[streamer].substr(2))
+            .transition()
+            .delay((d, i) => 10*i + count_selected*10)
+            .duration(1000)
+            .attr("y", margin.top + (rect_height + height_padding)*count_selected);
+
+        d3.select("#hover_rect_" + selected_ranks[streamer])
+            .transition()
+            .duration(1000)
+            .attr("y", margin.top + (rect_height + height_padding)*count_selected - height_padding/2);
+
+        d3.selectAll("#streamer_text_" + selected_ranks[streamer])
+            .transition()
+            .duration(1000)
+            .attr("y", margin.top + (rect_height + height_padding)*count_selected + rect_height/2 + 5);
+        count_selected++;
+    }
+
+    if (count_selected == 1) {
+        d3.select("#gantt-chart-svg")
+            .select("#no-streamers-rect")
+            .transition()
+            .attr("opacity", function() {
+                this.parentElement.appendChild(this);
+                return .8;
+            });
+
+        d3.select("#gantt-chart-svg")
+            .select("#no-streamers-text")
+            .transition()
+            .attr("opacity", function() {
+                this.parentElement.appendChild(this);
+                return 1;
+            });
+    } else {
+        d3.select("#gantt-chart-svg")
+            .selectAll("#no-streamers-text, #no-streamers-rect")
+            .attr("opacity", function() {
+                this.parentNode.insertBefore(this, this.parentNode.firstChild);
+                return 0;
+            });
+    }
+
+    for (streamer in non_selected_streamers) {
+        d3.selectAll(non_selected_streamers[streamer].substr(2))
+            .attr("y", gantt_height + margin.bottom);
+
+        d3.select("#hover_rect_" + non_selected_ranks[streamer])
+            .attr("y", gantt_height + margin.bottom);
+
+        d3.selectAll("#streamer_text_" + non_selected_ranks[streamer])
+            .attr("y", gantt_height + margin.bottom);
+        d3.selectAll("#streamer-tile-img-" + non_selected_ranks[streamer])
+            .classed("streamer-tile-img-deselected", true);
+    }
+}
+
+function clearStreamerSelection(data) {
+    if (
+        data_selection_info['rank'] != 'All' ||
+        data_selection_info['gender'] != 'All' ||
+        data_selection_info['nationality'] != 'All' ||
+        data_selection_info['age'] != 'All'
+    ) {
+        data_selection_info = {
+            'rank': 'All',
+            'gender': 'All',
+            'nationality': 'All',
+            'age': 'All',
+        };
+        d3.selectAll('.select')
+            .property('value', 'All');
+        d3.select('#encoding-selector')
+            .property('value', 'Average Viewers');
+        selectStreamers(data, data_selection_info, 'rank', 'All');
+        changeEncoding();
+    }
 }
 
 function mouseOverGantt(t, selectedData) {
@@ -435,25 +638,26 @@ function mouseOverGantt(t, selectedData) {
         .append("g")
         .attr("id", "tooltip");
 
-    tgrp.append("text")
-        .attr("x", 5)
-        .attr("y", 18)
-        .attr("text-anchor", "left")
-        .attr("font-family", "sans-serif")
-        .attr("font-size", "16")
-        .attr("font-weight", "bold")
-        .attr("fill", "white")
-        .text(`${selectedData.name}`);
+    const encoding_val = color_obj[curr_encoding]['field'](selectedData);
+
+    // Streamer names are different in two data sets
+    var channel_name = "";
+    for (streamer of streamer_seletor_data) {
+        if (streamer.Rank == selectedData.rank) {
+            channel_name = streamer.Channel;
+            break;
+        }
+    }
 
     tgrp.append("text")
         .attr("x", 5)
-        .attr("y", 34)
+        .attr("y", 26)
         .attr("text-anchor", "left")
         .attr("font-family", "sans-serif")
-        .attr("font-size", "16")
-        .attr("font-style", "italic")
-        .attr("fill", "white")
-        .text(`Rank: ${selectedData.rank}`);
+        .attr("font-size", "20")
+        .attr("font-weight", "bold")
+        .attr("fill", "black")
+        .text(`${numberWithCommas(Math.round(encoding_val))}`);
 
     tgrp.append("text")
         .attr("x", 5)
@@ -461,87 +665,38 @@ function mouseOverGantt(t, selectedData) {
         .attr("text-anchor", "left")
         .attr("font-family", "sans-serif")
         .attr("font-size", "16")
+        .attr("fill", "black")
         .attr("font-style", "italic")
-        .attr("fill", "white")
-        .text(`Month: ${selectedData.start.getMonth()+1 + "/" + selectedData.start.getFullYear()}`);
+        .text(`${channel_name} (${selectedData.rank})`);
 
     tgrp.append("text")
         .attr("x", 5)
-        .attr("y", 66)
+        .attr("y", 70)
         .attr("text-anchor", "left")
         .attr("font-family", "sans-serif")
         .attr("font-size", "16")
+        .attr("fill", "black")
         .attr("font-style", "italic")
-        .attr("fill", "white")
-        .text(`${numberWithCommas(selectedData.stream_count)} Stream${selectedData.stream_count == 1 ? '' : 's'}`);
+        .text(`${selectedData.start.getMonth()+1 + "/" + selectedData.start.getFullYear()}`);
 
-    tgrp.append("text")
-        .attr("x", 5)
-        .attr("y", 82)
-        .attr("text-anchor", "left")
-        .attr("font-family", "sans-serif")
-        .attr("font-size", "16")
-        .attr("font-style", "italic")
-        .attr("fill", "white")
-        .text(`Avg Followers Gained: ${numberWithCommas(Math.round(selectedData.avg_followers_gained))}`);
-
-    tgrp.append("text")
-        .attr("x", 5)
-        .attr("y", 98)
-        .attr("text-anchor", "left")
-        .attr("font-family", "sans-serif")
-        .attr("font-size", "16")
-        .attr("font-style", "italic")
-        .attr("fill", "white")
-        .text(`Avg Peak Viewers: ${numberWithCommas(Math.round(selectedData.avg_peak_viewers))}`);
-
-    tgrp.append("text")
-        .attr("x", 5)
-        .attr("y", 114)
-        .attr("text-anchor", "left")
-        .attr("font-family", "sans-serif")
-        .attr("font-size", "16")
-        .attr("font-style", "italic")
-        .attr("fill", "white")
-        .text(`Avg Stream Length: ${numberWithCommas(Math.round(selectedData.avg_stream_length))} minutes`);
-
-    tgrp.append("text")
-        .attr("x", 5)
-        .attr("y", 130)
-        .attr("text-anchor", "left")
-        .attr("font-family", "sans-serif")
-        .attr("font-size", "16")
-        .attr("font-style", "italic")
-        .attr("fill", "white")
-        .text(`Avg Viewers: ${numberWithCommas(Math.round(selectedData.avg_viewers))}`);
-
-    tgrp.append("text")
-        .attr("x", 5)
-        .attr("y", 146)
-        .attr("text-anchor", "left")
-        .attr("font-family", "sans-serif")
-        .attr("font-size", "16")
-        .attr("font-style", "italic")
-        .attr("fill", "white")
-        .text(`Avg Views per Hour: ${numberWithCommas(Math.round(selectedData.avg_views_per_hour))}`);
 
     var text_width = null;
 
     tgrp.append("rect")
         .attr("width", function(d) {
             text_width = this.parentNode.getBBox().width;
-            return this.parentNode.getBBox().width + 10;
+            return this.parentNode.getBBox().width + 15;
         })
-        .attr("height", "160")
-        .attr("fill", "blueviolet")
+        .attr("height", "80")
+        .attr("fill", "white")
         .attr("stroke", "black")
         .attr("stroke-width", 1)
         .lower();
 
     const curr_x = parseFloat(d3.select(t).attr("x"));
-    const x_offset = 30;
+    const x_offset = curr_x < screen.width/2 ? 0 : -text_width;
     var xpos = curr_x + x_offset;
-    var ypos = parseFloat(d3.select(t).attr("y")) - 40;
+    var ypos = parseFloat(d3.select(t).attr("y")) - 90;
     tgrp.attr("transform", `translate(${xpos}, ${ypos})`);
 }
 
@@ -554,16 +709,26 @@ function mouseOutGantt(t, selectedDate) {
 
 function mouseOverText(t, selectedData) {
     d3.select(t)
-        .transition()
+        .attr("font-size", 22)
         .attr("font-weight", "bold");
 
-    t.parentElement.appendChild(t);
+    d3.select("#hover_rect_" + selectedData.Rank)
+        .attr("opacity", .8);
+
+    d3.select(t).style("cursor", "pointer");
 }
 
 function mouseOutText(t, selectedData) {
     d3.select(t)
-        .transition()
+        .attr("font-size", 20)
         .attr("font-weight", "regular");
+
+    if (currStreamer != selectedData) {
+        d3.select("#hover_rect_" + selectedData.Rank)
+            .attr("opacity", 0);
+    }
+
+    d3.select(t).style("cursor", "default"); 
 }
 
 function makeLegend(encoding) {
@@ -609,30 +774,29 @@ function makeLegend(encoding) {
 }
 
 function createSmallChart(data, curr_rank, encoding, total_months, first_month) {
-    console.log(encoding)
-    d3.select("#small-chart-svg").selectAll('rect').remove();
     d3.select("#small-chart-svg").selectAll('text').remove();
 
-    const chart_height = 1000;
-    const chart_margin = {left: 150, right: 40, top: 200, bottom: 40};
+    const chart_margin = {left: 150, right: 40, top: 100, bottom: 160};
     d3.select("#small-chart-svg")
-        .attr("viewBox", [0, 0, screen.width, chart_height]);
+        .attr("viewBox", [0, 0, screen.width, small_chart_height]);
 
     const streamer_data = data.filter(d => d.rank == curr_rank);
     const extract_field = color_obj[encoding]['field'];
     const y_domain = [0, d3.extent(streamer_data.map(d => extract_field(d)))[1]];
+    
+    const bar_padding = 5;
+    const bar_width = (screen.width - margin.left - margin.right)/total_months - bar_padding;
 
     const y_scale  = d3.scaleLinear()
         .domain(y_domain)
-        .range([0, chart_height - chart_margin.top]);
+        .range([0, small_chart_height - chart_margin.top - chart_margin.bottom]);
 
     const x_scale = d3.scaleLinear()
         .domain([0, total_months])
-        .range([chart_margin.left, screen.width - chart_margin.right]);
+        .range([chart_margin.left, screen.width - chart_margin.right - bar_width]);
 
     const x_axis_ticks = [
         {date: new Date(2015, 6), label: '7/2015'},
-        {date: new Date(2016, 0), label: '1/2016'},
         {date: new Date(2017, 0), label: '1/2017'},
         {date: new Date(2018, 0), label: '1/2018'},
         {date: new Date(2019, 0), label: '1/2019'},
@@ -648,92 +812,181 @@ function createSmallChart(data, curr_rank, encoding, total_months, first_month) 
         Math.round(4*(y_domain[1] - y_domain[0])/5),
         Math.round(y_domain[1]),
     ];
+    const axis_pad = 20;
+    if (!small_chart_created) {
+        // x axis
+        d3.select("#small-chart-svg")
+            .append("line")
+            .attr("x1", chart_margin.left)
+            .attr("x2", screen.width - chart_margin.right)
+            .attr("y1", small_chart_height - chart_margin.bottom + axis_pad)
+            .attr("y2", small_chart_height - chart_margin.bottom + axis_pad)
+            .attr("stroke-weight", 5)
+            .attr("stroke", "white");
 
-    d3.select("#small-chart-svg")
-        .append("line")
-        .attr("x1", chart_margin.left)
-        .attr("x2", screen.width - chart_margin.right)
-        .attr("y1", chart_height - chart_margin.bottom)
-        .attr("y2", chart_height - chart_margin.bottom)
-        .attr("stroke-weight", 5)
-        .attr("stroke", "white");
+        // y axis
+        d3.select("#small-chart-svg")
+            .append("line")
+            .attr("x1", chart_margin.left - axis_pad)
+            .attr("x2", chart_margin.left - axis_pad)
+            .attr("y1", 100)
+            .attr("y2", small_chart_height - chart_margin.bottom)
+            .attr("stroke-weight", 5)
+            .attr("stroke", "white");
 
-    d3.select("#small-chart-svg")
-        .append("line")
-        .attr("x1", chart_margin.left)
-        .attr("x2", chart_margin.left)
-        .attr("y1", 100)
-        .attr("y2", chart_height - chart_margin.bottom)
-        .attr("stroke-weight", 5)
-        .attr("stroke", "white");
+        // x axis ticks
+        d3.select("#small-chart-svg")
+            .append("g")
+            .selectAll("line")
+            .data(x_axis_ticks)
+            .join("line")
+                .attr("x1", d => x_scale(dateDiff(d.date, first_month)))
+                .attr("x2", d => x_scale(dateDiff(d.date, first_month)))
+                .attr("y1", small_chart_height - chart_margin.bottom + 30 + axis_pad)
+                .attr("y2", small_chart_height - chart_margin.bottom + axis_pad)
+                .attr("stroke", "white");
 
+        // y axis ticks
+        d3.select("#small-chart-svg")
+            .append("g")
+            .selectAll("line")
+            .data(y_axis_ticks)
+            .join("line")
+                .attr("x1", chart_margin.left - 10 - axis_pad)
+                .attr("x2", chart_margin.left - axis_pad)
+                .attr("y1", d => small_chart_height - chart_margin.bottom - y_scale(d))
+                .attr("y2", d => small_chart_height - chart_margin.bottom - y_scale(d))
+                .attr("stroke", "white");
+    }
+
+    // x axis labels
     d3.select("#small-chart-svg")
         .append("g")
         .selectAll("text")
         .data(x_axis_ticks)
         .join("text")
-            .attr("x", d => x_scale(dateDiff(d.date, first_month)) + 10)
-            .attr("y", chart_height - chart_margin.bottom + 30)
             .attr("fill", "white")
-            .attr("font-size", 25)
+            .attr("font-size", 34)
+            .attr("transform", d=>`translate(${x_scale(dateDiff(d.date, first_month)) - 70}, ${small_chart_height - 20 + axis_pad}), rotate(-45)`)
             .text(d => d.label);
 
+    // y axis labels (needs to change)
     d3.select("#small-chart-svg")
         .append("g")
         .selectAll("text")
         .data(y_axis_ticks)
         .join("text")
-            .attr("x", chart_margin.left - 30)
-            .attr("y", d => chart_height - chart_margin.bottom - y_scale(d))
+            .attr("x", chart_margin.left - 30 - axis_pad)
+            .attr("y", d => small_chart_height - chart_margin.bottom - y_scale(d))
             .attr("fill", "white")
-            .attr("font-size", 25)
+            .attr("font-size", 28)
             .attr("text-anchor", "end")
             .text(d => numberWithCommas(d));
 
-    d3.select("#small-chart-svg")
-        .append("g")
-        .selectAll("line")
-        .data(x_axis_ticks)
-        .join("line")
-            .attr("x1", d => x_scale(dateDiff(d.date, first_month)))
-            .attr("x2", d => x_scale(dateDiff(d.date, first_month)))
-            .attr("y1", chart_height - chart_margin.bottom + 30)
-            .attr("y2", chart_height - chart_margin.bottom)
-            .attr("stroke", "white");
-
-    d3.select("#small-chart-svg")
-        .append("g")
-        .selectAll("line")
-        .data(y_axis_ticks)
-        .join("line")
-            .attr("x1", chart_margin.left - 10)
-            .attr("x2", chart_margin.left)
-            .attr("y1", d => chart_height - chart_margin.bottom - y_scale(d))
-            .attr("y2", d => chart_height - chart_margin.bottom - y_scale(d))
-            .attr("stroke", "white");
-
-    const bar_padding = 5;
-    const bar_width = (screen.width - margin.left - margin.right)/total_months - bar_padding;
-
-    d3.select('#small-chart-svg')
-        .append('g')
+    // chart rects (needs to change)
+   d3.select('#small-chart-svg')
         .selectAll('rect')
         .data(streamer_data)
         .join('rect')
+            .attr("id", d => "small_bar_" + d.start.getFullYear() + "_" + d.start.getMonth())
             .attr("width", bar_width)
-            .attr("height", d => y_scale(extract_field(d)))
-            .attr("y", d => chart_height - chart_margin.bottom - y_scale(extract_field(d)))
             .attr("x", d => x_scale(dateDiff(d.start, first_month)))
             .attr("fill", "white")
-            .attr("opacity", 1);
+            .attr("opacity", 1)
+            .transition()
+                .duration(500)
+                .attr("y", d => small_chart_height - chart_margin.bottom - y_scale(extract_field(d)))
+                .attr("height", d => y_scale(extract_field(d)));
 
-
+    // Rects for hovering on bar chart
+    d3.select('#small-chart-svg')
+        .append("g")
+        .selectAll('rect')
+        .data(streamer_data)
+        .join('rect')
+            .attr("opacity", 0)
+            .attr("width", bar_width)
+            .attr("x", d => x_scale(dateDiff(d.start, first_month)))
+            .on("mouseover", function(_, selectedData) {
+                mouseOverSmallChart(this, selectedData, extract_field, y_scale);
+            })
+            .on("mouseout", function(_, selectedData) {
+                mouseOutSmallChart(this, selectedData);
+            })
+            .attr("y", chart_margin.top)
+            .attr("height", small_chart_height - chart_margin.top - chart_margin.bottom);
+                
+    // chart title (needs to change)
+    const title = streamer_data[0].name + "'s " + encoding;
     d3.select("#small-chart-svg")
         .append("text")
         .attr("x", screen.width/2)
         .attr("y", chart_margin.top/2.5)
-        .text(streamer_data[0].name + "'s " + encoding)
+        .text(title)
         .attr("fill", "white")
         .attr("font-size", 40)
         .attr("text-anchor", "middle");
+
+    small_chart_created = true;
+}
+
+function mouseOverSmallChart(t, selectedData, extract_field, y_scale) {
+    const bar_id = "#small_bar_" + selectedData.start.getFullYear() + "_" + selectedData.start.getMonth();
+    d3.select("#small-chart-svg")
+        .select(bar_id)
+        .attr("fill", "blueviolet");
+
+    var tgrp = d3.select("#small-chart-svg")
+        .append("g")
+        .attr("id", "tooltip");
+
+    tgrp.append("text")
+        .attr("x", 5)
+        .attr("y", 36)
+        .attr("text-anchor", "left")
+        .attr("font-family", "sans-serif")
+        .attr("font-size", "36")
+        .attr("font-weight", "bold")
+        .attr("fill", "white")
+        .text(`${numberWithCommas(Math.round(extract_field(selectedData)))}`);
+
+    tgrp.append("text")
+        .attr("x", 5)
+        .attr("y", 70)
+        .attr("text-anchor", "left")
+        .attr("font-family", "sans-serif")
+        .attr("font-size", "32")
+        .attr("font-style", "italic")
+        .attr("font-weight", "bold")
+        .attr("fill", "white")
+        .text(`${(selectedData.start.getMonth()+1) + "/" + selectedData.start.getFullYear()}`);
+
+    var text_width = null;
+
+    tgrp.append("rect")
+        .attr("width", function(d) {
+            text_width = this.parentNode.getBBox().width;
+            return this.parentNode.getBBox().width + 10;
+        })
+        .attr("height", "90")
+        .attr("fill", "blueviolet")
+        .attr("stroke", "black")
+        .attr("stroke-width", 1)
+        .lower();
+
+    const curr_x = parseFloat(d3.select(t).attr("x"));
+    const x_offset = curr_x < screen.width/2 ? 30 : -text_width-20;
+    var xpos = curr_x + x_offset;
+
+    const curr_y = small_chart_height - y_scale(extract_field(selectedData));
+    var ypos = Math.min(Math.max(curr_y, 150), 680);
+    tgrp.attr("transform", `translate(${xpos}, ${ypos})`);
+}
+
+function mouseOutSmallChart(t, selectedData) {
+    const bar_id = "#small_bar_" + selectedData.start.getFullYear() + "_" + selectedData.start.getMonth();
+    d3.select("#small-chart-svg")
+        .select(bar_id)
+        .attr("fill", "white");
+    d3.select("#tooltip").remove();
 }

@@ -1,147 +1,192 @@
 * {
-    box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 html {
-    font-size: 12px;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-size: 12px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
 }
 
 body {
-    width: 100%;
-    height: 100%;
-    background-color: #333333 !important;
-    color: white !important;
-    font-family: 'Libre Franklin', sans-serif !important;
+  width: 100%;
+  height: 100%;
+  background-color: #333333 !important;
+  color: white !important;
+  font-family: "Libre Franklin", sans-serif !important;
 }
 
-h1{
-    padding-left: 200px;
-    padding-right: 200px;
-    font-size: 50px !important;
-    font-family: 'Merriweather', serif !important;
-    padding-top: 20px;
+h1 {
+  font-size: 50px !important;
+  font-family: "Merriweather", serif !important;
+  padding-top: 20px;
 }
 
-figcaption{
-    color: lightgrey;
-    font-size: 13px;
+figcaption {
+  color: lightgrey;
+  font-size: 13px;
 }
 
-h3{
-    padding-left: 200px;
-    padding-right: 200px;
+h2 {
+  line-height: 2.0 !important;
+  font-size: 40px !important;
+  font-weight: bold !important;
 }
 
-.top-100{
-    font-size: 40px !important;
-    padding-left: 200px;
-    padding-right: 200px;
+p,
+.column-text {
+  padding-left: 200px;
+  padding-right: 200px;
 }
 
-p{
-    padding-left: 200px;
-    padding-right: 200px;
+#pie-title > h2 {
+  line-height: 3 !important;
+  font-size: 24px !important;
 }
 
 .container {
-    margin-left: auto;
-    margin-right: auto;
-    width: min(100%, 1000px);
-    padding: 0px !important;
+  margin-left: auto;
+  margin-right: auto;
+  width: min(100%, 1000px);
+  padding: 0px !important;
 }
 
 .narrative {
-    font-size: 1.5rem;
+  font-size: 1.5rem;
 }
 
 .streamer-pic {
-    width:100%;
+  width: 100%;
 }
 
 #streamer-icons {
-    display: flex;
-    flex-flow: row wrap;
-    padding: 4px;
+  display: flex;
+  flex-flow: row wrap;
 }
 
 .icon {
-    width: 45px;
-    height: 45px;
-    background-color: blueviolet;
-    padding: 2px;
-    margin: 2px;
+  width: 41px;
+  height: 41px;
+  background-color: blueviolet;
+  padding: 2px;
+  margin: 2px;
 }
 
 a {
-    color: blueviolet !important;
+  color: blueviolet !important;
 }
-
 
 .icon-large {
-    width: 94px;
-    height: 94px;
-    background-color: blueviolet;
-    padding: 4px;
+  width: 94px;
+  height: 94px;
+  background-color: blueviolet;
+  padding: 4px;
 }
 
-.icon > img, .icon-large > img {
-    width: 100%;
-    height: 100%;
-    background-color: white;
+.icon > img,
+.icon-large > img {
+  width: 100%;
+  height: 100%;
+  background-color: white;
+}
+
+.streamer-tile-img-deselected {
+  opacity: 0.25;
+  background-color: dimgray;
+}
+
+.streamer-tile-img-hover {
+  opacity: 0.5;
+}
+
+.streamer-tile-img-clicked {
+  opacity: 0.5;
+  background-color: blueviolet;
 }
 
 #streamer-panel {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin: 2rem 0rem;
+}
+
+#streamer-detail {
+  height: 400px;
 }
 
 #streamer-small-chart {
-    width: 100%;
+  width: 100%;
+}
+
+#streamer-header {
+  display: grid;
+  grid-template-columns: 94px 1fr;
 }
 
 .streamer-title {
-    font-size: 4em;
-    font-weight: bold;
-    line-height: 1.5;
+  font-size: 4rem;
+  font-weight: bold;
+  line-height: 96px;
+  padding-left: 2rem;
 }
 
 .streamer-field {
-    font-size: 2em;
-    line-height: 1.5;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+  font-size: 2em;
+  line-height: 1.5;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
 }
 
 .streamer-field > .label {
-    font-variant: small-caps;
-    color: blueviolet;
+  font-variant: small-caps;
 }
 
 .streamer-field > .value {
-    font-weight: bold;
+  font-weight: bold;
 }
 
 #selection-panel {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  column-gap: 2rem;
+  margin: 1rem 0rem;
 }
 
 .selection-group {
-    border: 2px solid blueviolet;
-    padding: 4px;
+  border: 2px solid blueviolet;
+  padding: 4px;
+}
+
+.selection-item {
+  margin-bottom: 1rem;
+}
+
+.selector-text {
+  margin-right: 1rem;
+}
+
+#gender-buttons {
+  width: 100%;
+}
+
+#selector-clear-button {
+  margin-top: 1.5rem;
 }
 
 #gantt-chart-container {
-    display: flex;
-    width: 100%;
+  display: flex;
+  width: 100%;
 }
 
 #gantt-chart-svg {
-    margin: auto;
+  margin: auto;
 }
 
 #gantt-content {
-    padding-top: 10px;
+  padding-top: 10px;
+}
+
+.data-provenance {
+  font-size: 1.5rem;
+  margin: 3rem 0rem;
 }
