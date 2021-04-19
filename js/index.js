@@ -64,6 +64,8 @@ const small_chart_height = 1000;
 // Use so axes are not repeatedly drawn
 var small_chart_created = false;
 
+var streamer_seletor_data = [];
+
 // Gantt Chart
 d3.csv("./data/gantt_month_data.csv")
 .then(function (raw_data) {
@@ -73,6 +75,7 @@ d3.csv("./data/gantt_month_data.csv")
 
     d3.csv("./data/top_100_streamers_with_categorical.csv")
     .then(function (tile_data) {
+        streamer_seletor_data = tile_data;
         currStreamer = tile_data[0];
         setStreamerDetail(currStreamer);
         d3.select('#streamer-icons')
@@ -245,20 +248,26 @@ d3.csv("./data/gantt_month_data.csv")
         d3.select("#gantt-chart-svg")
             .append("g")
             .selectAll("text")
-            .data([...new Set(data.map(d => d.name))])
+            .data(tile_data)
             .join("text")
                 .attr("id", (d, i) => "streamer_text_" + (i+1))
-                .attr("y", (d, i) => margin.top + (rect_height + height_padding)*(i+1) + rect_height/2 + 5)
+                .attr("y", (d, i) => margin.top + (rect_height + height_padding)*(i+1) + rect_height/2 + 7)
                 .attr("x", text_padding - 14)
-                .text((d, i) => d + " (" + (i+1) + ")")
+                .text((d, i) => d.Channel + " (" + (i+1) + ")")
                 .attr("text-anchor", "end")
                 .attr("fill", "white")
                 .attr("font-size", 20)
                 .on("mouseover", function(event, selectedData) {
                     mouseOverText(this, selectedData);
+                    d3.selectAll("#streamer-tile-img-" + selectedData.Rank).dispatch('mouseover');
                 })
                 .on("mouseout", function(event, selectedData) {
                     mouseOutText(this, selectedData);
+                    d3.selectAll("#streamer-tile-img-" + selectedData.Rank).dispatch('mouseout');
+                })
+                .on("click", function(event, selectedData) {
+                    d3.selectAll("#streamer-tile-img-" + selectedData.Rank).dispatch('click');
+                    d3.selectAll("#streamer-tile-img-" + selectedData.Rank).dispatch('mouseover');
                 });
 
         var select_nationality = d3.select('#nationality-selector-container')
@@ -633,6 +642,15 @@ function mouseOverGantt(t, selectedData) {
 
     const encoding_val = color_obj[curr_encoding]['field'](selectedData);
 
+    // Streamer names are different in two data sets
+    var channel_name = "";
+    for (streamer of streamer_seletor_data) {
+        if (streamer.Rank == selectedData.rank) {
+            channel_name = streamer.Channel;
+            break;
+        }
+    }
+
     tgrp.append("text")
         .attr("x", 5)
         .attr("y", 26)
@@ -651,7 +669,7 @@ function mouseOverGantt(t, selectedData) {
         .attr("font-size", "16")
         .attr("fill", "black")
         .attr("font-style", "italic")
-        .text(`${selectedData.name} (${selectedData.rank})`);
+        .text(`${channel_name} (${selectedData.rank})`);
 
     tgrp.append("text")
         .attr("x", 5)
@@ -693,16 +711,27 @@ function mouseOutGantt(t, selectedDate) {
 
 function mouseOverText(t, selectedData) {
     d3.select(t)
-        .transition()
+        .attr("font-size", 22)
         .attr("font-weight", "bold");
 
+    d3.select("#hover_rect_" + selectedData.Rank)
+        .attr("opacity", .8);
+
+    d3.select(t).style("cursor", "pointer"); 
     t.parentElement.appendChild(t);
 }
 
 function mouseOutText(t, selectedData) {
     d3.select(t)
-        .transition()
+        .attr("font-size", 20)
         .attr("font-weight", "regular");
+
+    if (currStreamer != selectedData) {
+        d3.select("#hover_rect_" + selectedData.Rank)
+            .attr("opacity", 0);
+    }
+
+    d3.select(t).style("cursor", "default"); 
 }
 
 function makeLegend(encoding) {
