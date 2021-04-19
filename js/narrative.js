@@ -9,6 +9,7 @@ var barsvg = d3
   .attr("height", barheight + barmargin.top + barmargin.bottom)
   .append("g")
   .attr("transform", "translate(" + barmargin.left + "," + barmargin.top + ")");
+
 d3.csv("data/ages.csv").then(function (data) {
   //X axis
   var x = d3
@@ -58,7 +59,7 @@ d3.csv("data/ages.csv").then(function (data) {
     .attr("dy", "1em")
     .style("text-anchor", "middle")
     .text("Percentage")
-    .style("fill", "white");
+    .style("fill", "white")
 
   //bars
   barsvg
@@ -76,8 +77,41 @@ d3.csv("data/ages.csv").then(function (data) {
     .attr("height", function (d) {
       return barheight - y(d.percentage);
     })
-    .attr("fill", "#beff00");
+    .attr("fill", "#beff00")
+    .on("mouseover", function(event, selectedData) {
+      mouseOverBarChart(this, selectedData)
+    })
+    .on("mouseout", function(event, selectedData) {
+      mouseOutBarChart(this, selectedData);
+    });
 });
+
+function mouseOutBarChart(t, selectedDate) {
+  d3.select("#bartooltip").remove();
+}
+
+function mouseOverBarChart(t, selectedData) {
+  //console.log(selectedData);
+  //console.log(t);
+
+  var ttbar = d3.select("#bar-container")
+      .append("g")
+      .attr("id", "bartooltip");
+  
+  var formatPercent = d3.format(".0%");
+
+  ttbar.append("text")
+  .attr("x", function(d){ console.log(t.x.animVal.value); return t.x.animVal.value})
+  .attr("y", function(d,i){ return 30 + i*40})
+  .attr("text-anchor", "left")
+  .attr("font-family", "sans-serif")
+  .attr("font-size", "20")
+  .attr("font-weight", "bold")
+  .attr("fill", "black")
+  .text(formatPercent(selectedData.percentage))
+  .attr("transform", "translate(" + 32 + "," + 233 + ")");
+}
+
 
 function numberWithCommas(x) {
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -222,3 +256,4 @@ function updateGenderPieChart(data) {
 
   u.exit().remove();
 }
+
