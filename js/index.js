@@ -933,7 +933,7 @@ function mouseOverSmallChart(t, selectedData, extract_field, y_scale) {
         .attr("font-style", "italic")
         .attr("font-weight", "bold")
         .attr("fill", "white")
-        .text(`${selectedData.start.getMonth() + "/" + selectedData.start.getFullYear()}`);
+        .text(`${(selectedData.start.getMonth()+1) + "/" + selectedData.start.getFullYear()}`);
 
     var text_width = null;
 
