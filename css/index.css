@@ -17,8 +17,6 @@ body {
 }
 
 h1 {
-  padding-left: 200px;
-  padding-right: 200px;
   font-size: 50px !important;
   font-family: "Merriweather", serif !important;
   padding-top: 20px;
@@ -29,24 +27,21 @@ figcaption {
   font-size: 13px;
 }
 
-h3 {
-  padding-left: 200px;
-  padding-right: 200px;
+h2 {
+  line-height: 2.0 !important;
+  font-size: 40px !important;
+  font-weight: bold !important;
 }
 
-.top-100 {
-  font-size: 40px !important;
+p,
+.column-text {
   padding-left: 200px;
   padding-right: 200px;
 }
 
 #pie-title > h2 {
-  line-height: 3;
-}
-
-p {
-  padding-left: 200px;
-  padding-right: 200px;
+  line-height: 3 !important;
+  font-size: 24px !important;
 }
 
 .container {
@@ -96,17 +91,17 @@ a {
 }
 
 .streamer-tile-img-deselected {
-    opacity: 0.25;
-    background-color: dimgray;
+  opacity: 0.25;
+  background-color: dimgray;
 }
 
 .streamer-tile-img-hover {
-    opacity: 0.5;
+  opacity: 0.5;
 }
 
 .streamer-tile-img-clicked {
-    opacity: 0.5;
-    background-color: blueviolet;
+  opacity: 0.5;
+  background-color: blueviolet;
 }
 
 #streamer-panel {
@@ -116,7 +111,7 @@ a {
 }
 
 #streamer-detail {
-    height: 400px;
+  height: 400px;
 }
 
 #streamer-small-chart {
@@ -175,7 +170,7 @@ a {
 }
 
 #selector-clear-button {
-    margin-top: 1.5rem;
+  margin-top: 1.5rem;
 }
 
 #gantt-chart-container {
@@ -189,4 +184,9 @@ a {
 
 #gantt-content {
   padding-top: 10px;
+}
+
+.data-provenance {
+  font-size: 1.5rem;
+  margin: 3rem 0rem;
 }

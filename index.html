@@ -26,8 +26,8 @@
                         <figcaption>From top to bottom, left to right: Imane Anys (Pokimane), Thomas Simons (TommyInnit), Ali Kabbani (Myth), Hikaru Nakamura (Hikaru), Ludwig Ahgren (Ludwig).</figcaption>
                     </figure>
                 </div>
-                <h1><b>Paid to Play: </b>A Breakdown of the Top 100 Twitch Streamers</h1>
-                <h3>By Alex Cohen, Joseph Hier, Hollis Lehv, and Matteo Sandrin</h3>
+                <h1 class="column-text"><b>Paid to Play: </b>A Breakdown of the Top 100 Twitch Streamers</h1>
+                <h3 class="column-text">By Alex Cohen, Joseph Hier, Hollis Lehv, and Matteo Sandrin</h3>
                 <br>
                 <p>Can you really make thousands playing video games from your parents' basement? Some are, and they're doing it on a site called Twitch. Started in 2011, Twitch is a streaming service with over 140 million active users per month, accruing an estimated $1.54 billion annual revenue. Users watch their favorite streamers do anything from cook to dance to work out. The most popular type of content on the platform is gaming. </p>
                 <div class="row align-items-center">
@@ -77,7 +77,7 @@
                 </div>
                 <p>Some have questions about the lasting potential of Twitch. Is a business model based around voluntary subscriptions and donations sustainable? Will the lack of diversity on Twitch be its downfall? Will twitch expand to a wider audience beyond gaming? We invite you to think about these questions as you explore the backgrounds, personalities, and stories of the Twitch elite. </p>
                 <br>
-                <div class="top-100"><b>The Top 100</b></div>
+                <h2 class="column-text">The Top 100</h2>
                 <p>
                     Explore the top 100 streamers with our interactive tool.
                     In the chart at the bottom, each section of a streamer's row represents their streams in that month. The color encoding corresponds to the average value for the streams in a particular month.
@@ -165,6 +165,12 @@
                 <div id="gantt-chart-container" height="100%">
                     <svg id="gantt-chart-svg" height="100%"></svg>
                 </div>
+            </div>
+            <div class="data-provenance">
+                <h2 class="column-text">Who's your (data) source?</h2>
+                <p>The data for this visualization was gathered from <a href="https://www.sullygnome.com/">sullygnome.com</a>, which is a statistics and analytics service for Twitch. SullyGnome uses the Twitch API to collect information on every Twitch streamer with 3 or more viewers, at 15-minute intervals. This data is then aggregated and displayed on the website. The historical data provided by SullyGnome goes as far back as 2015. </p>
+                <br>
+                <p>We wrote a collection of Python scripts to scrape ranking, viewer, follower and subscriber historical data from SullyGnome, for each of the top 100 Twitch streamers. These scripts were run in a staggered fashion over the course of a 24-hour window, with the aim of reducing load on SullyGnome’s servers. For each top 100 streamer, we also individually researched, filled in, and aggregated a number biographical data points (age, nationality, career, etc.).</p>
             </div>
         </div>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/6.6.2/d3.min.js" integrity="sha512-L2eTGYYQqzK5YozYyUVrJKj2ZRnHE3QzV1+1yY6VXHExStF3potRZyEcD/B6sTOe04xYxB21QNLmVTQFcgwovg==" crossorigin="anonymous"></script>
