@@ -54,8 +54,8 @@
                             <h2><b>Top 100 Streamers are overwhelmingly male</b></h2>
                         </div>
                         <div class=" d-flex justify-content-center" >
-                            <button onclick="updateGenderPieChart(data2)" class="btn-secondary"> Top 100 Streamers</button>
-                            <button onclick="updateGenderPieChart(data1)" class="btn-secondary"> Twitch Viewers </button>
+                            <button onclick="updateGenderPieChart(data2)" class="btn btn-secondary"> Top 100 Streamers</button>
+                            <button onclick="updateGenderPieChart(data1)" class="btn btn-secondary"> Twitch Viewers </button>
                         </div>
                         <div class="justify-content-center">
                             <div class="justify-content-center" id="pie-container"></div>
@@ -129,17 +129,17 @@
                 <div class="col">
                     <div class="row align-items-center">
                         <div class="selector-text">Gender</div>
-                        <div id="gender-buttons">
-                            <button onclick="selectStreamers(gantt_data, data_selection_info, 'gender', 'All')" class="btn btn-secondary">
+                        <div id="gender-buttons" class="btn-group" role="group">
+                            <button type="button" onclick="selectStreamers(gantt_data, data_selection_info, 'gender', 'All')" class="btn btn-secondary">
                                 All
                             </button>
-                            <button onclick="selectStreamers(gantt_data, data_selection_info, 'gender', 'Male')" class="btn btn-secondary">
+                            <button type="button" onclick="selectStreamers(gantt_data, data_selection_info, 'gender', 'Male')" class="btn btn-secondary">
                                 Male
                             </button>
-                            <button onclick="selectStreamers(gantt_data, data_selection_info, 'gender', 'Female')" class="btn btn-secondary">
+                            <button type="button" onclick="selectStreamers(gantt_data, data_selection_info, 'gender', 'Female')" class="btn btn-secondary">
                                 Female
                             </button>
-                            <button onclick="selectStreamers(gantt_data, data_selection_info, 'gender', 'NA')" class="btn btn-secondary">
+                            <button type="button" onclick="selectStreamers(gantt_data, data_selection_info, 'gender', 'NA')" class="btn btn-secondary">
                                 N/A
                             </button>
                         </div>
