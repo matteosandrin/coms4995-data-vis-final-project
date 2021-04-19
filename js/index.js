@@ -123,7 +123,7 @@ d3.csv("./data/gantt_month_data.csv")
         
         const date_extent = d3.extent(data.map(d => d.start));
         total_months = dateDiff(date_extent[0], date_extent[1]);
-        const text_padding = 240;
+        const text_padding = 250;
         const date_scale = d3.scaleLinear()
             .domain([0, total_months])
             .range([text_padding, screen.width - margin.right]);
@@ -743,7 +743,7 @@ function mouseOutGantt(t, selectedDate) {
 
 function mouseOverText(t, selectedData) {
     d3.select(t)
-        .attr("font-size", 22)
+        .attr("font-size", 21)
         .attr("font-weight", "bold");
 
     d3.select("#hover_rect_" + selectedData.Rank)
