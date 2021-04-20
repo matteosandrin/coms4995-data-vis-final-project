@@ -94,7 +94,7 @@ function mouseOverBarChart(t, selectedData) {
   //console.log(selectedData);
   //console.log(t);
 
-  var ttbar = d3.select("#bar-container")
+  var ttbar = d3.select("#bar-tooltip")
       .append("g")
       .attr("id", "bartooltip");
   
@@ -110,6 +110,16 @@ function mouseOverBarChart(t, selectedData) {
   .attr("fill", "black")
   .text(formatPercent(selectedData.percentage))
   .attr("transform", "translate(" + 32 + "," + 233 + ")");
+
+  ttbar.append("rect")
+  .attr("width", "80")
+  .attr("height", "80")
+  .attr("y", parseFloat(d3.select(t).attr("x")) - 90)
+  .attr("x", parseFloat(d3.select(t).attr("x")))
+  .attr("fill", "white")
+  .attr("stroke", "black")
+  .attr("stroke-width", 1)
+  .lower();
 }
 
 
