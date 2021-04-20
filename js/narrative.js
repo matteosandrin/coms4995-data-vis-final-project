@@ -2,14 +2,15 @@ var barmargin = { top: 30, right: 30, bottom: 70, left: 60 },
   barwidth = 460 - barmargin.left - barmargin.right,
   barheight = 400 - barmargin.top - barmargin.bottom;
 
+const bar_chart_height = 400;
+const bar_chart_width = 500;
 var barsvg = d3
-  .select("#bar-container")
-  .append("svg")
-  .attr("width", barwidth + barmargin.left + barmargin.right)
-  .attr("height", barheight + barmargin.top + barmargin.bottom)
+  .select("#bar-svg")
+  .attr("viewBox", [0, 0, bar_chart_width, bar_chart_height])
   .append("g")
   .attr("transform", "translate(" + barmargin.left + "," + barmargin.top + ")");
 
+var y = d3.scaleLinear().domain([0, 0.5]).range([barheight, 0]);
 d3.csv("data/ages.csv").then(function (data) {
   //X axis
   var x = d3
@@ -47,7 +48,6 @@ d3.csv("data/ages.csv").then(function (data) {
   var formatPercent = d3.format(".0%");
 
   //y axis
-  var y = d3.scaleLinear().domain([0, 0.5]).range([barheight, 0]);
   barsvg.append("g").call(d3.axisLeft(y).tickFormat(formatPercent));
 
   // text label for the y axis
@@ -59,10 +59,11 @@ d3.csv("data/ages.csv").then(function (data) {
     .attr("dy", "1em")
     .style("text-anchor", "middle")
     .text("Percentage")
-    .style("fill", "white")
-
+    .style("fill", "white");
+    
   //bars
   barsvg
+    .append('g')
     .selectAll("bar")
     .data(data)
     .enter()
@@ -77,7 +78,26 @@ d3.csv("data/ages.csv").then(function (data) {
     .attr("height", function (d) {
       return barheight - y(d.percentage);
     })
-    .attr("fill", "#beff00")
+    .attr("fill", "#beff00");
+
+  //bars to hover
+  barsvg
+    .append('g')
+    .selectAll("bar")
+    .data(data)
+    .enter()
+    .append("rect")
+    .attr("x", function (d) {
+      return x(d.age);
+    })
+    .attr("y", function (d) {
+      return y(.5);
+    })
+    .attr("width", x.bandwidth())
+    .attr("height", function (d) {
+      return barheight;
+    })
+    .attr("opacity", 0)
     .on("mouseover", function(event, selectedData) {
       mouseOverBarChart(this, selectedData)
     })
@@ -94,32 +114,52 @@ function mouseOverBarChart(t, selectedData) {
   //console.log(selectedData);
   //console.log(t);
 
-  var ttbar = d3.select("#bar-tooltip")
+  var ttbar = d3.select("#bar-svg")
       .append("g")
       .attr("id", "bartooltip");
   
   var formatPercent = d3.format(".0%");
 
   ttbar.append("text")
-  .attr("x", function(d){ console.log(t.x.animVal.value); return t.x.animVal.value})
-  .attr("y", function(d,i){ return 30 + i*40})
+  .attr("x", 5)
+  .attr("y", 20)
   .attr("text-anchor", "left")
   .attr("font-family", "sans-serif")
   .attr("font-size", "20")
   .attr("font-weight", "bold")
   .attr("fill", "black")
-  .text(formatPercent(selectedData.percentage))
-  .attr("transform", "translate(" + 32 + "," + 233 + ")");
+  .text(formatPercent(selectedData.percentage));
+  
+  ttbar.append("text")
+  .attr("x", 5)
+  .attr("y", 40)
+  .attr("text-anchor", "left")
+  .attr("font-family", "sans-serif")
+  .attr("font-size", "16")
+  .attr("font-style", "italic")
+  .attr("fill", "black")
+  .text(selectedData.age);
 
   ttbar.append("rect")
-  .attr("width", "80")
-  .attr("height", "80")
-  .attr("y", parseFloat(d3.select(t).attr("x")) - 90)
-  .attr("x", parseFloat(d3.select(t).attr("x")))
+  .attr("width", function(d) {
+      text_width = this.parentNode.getBBox().width;
+      return this.parentNode.getBBox().width + 10;
+  })
+  .attr("height", "45")
   .attr("fill", "white")
   .attr("stroke", "black")
   .attr("stroke-width", 1)
   .lower();
+
+  const curr_x = parseFloat(d3.select(t).attr("x"));
+  const x_offset = 90;
+  const xpos = curr_x + x_offset;
+
+  const curr_y = y(selectedData.percentage);
+  const y_offset = -20;
+  const ypos = curr_y + y_offset;
+
+  ttbar.attr("transform", `translate(${xpos}, ${ypos})`);
 }
 
 
