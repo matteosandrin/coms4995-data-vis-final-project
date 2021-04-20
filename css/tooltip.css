@@ -7,7 +7,7 @@
   position: relative;
   z-index: 2;
   cursor: pointer;
-  color: blueviolet;
+  color: #bfabff;
 }
 
 [data-tooltip]:hover {
